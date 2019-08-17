@@ -9,6 +9,8 @@
 *.run.xml
 *.synctex.gz
 *.toc
+*.psd
+*.swp
 pdfa.xmpi
 texput.log
 .DS_Store
