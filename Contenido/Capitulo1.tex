@@ -1,8 +1,8 @@
-En los últimos años, empresas y organizaciones se han visto en la necesidad de gestionar de una manera eficiente y centralizada la información y recursos en red que disponen, activo fundamental para el correcto funcionamiento del negocio. El aumento masivo de dicha información además de la necesidad de crear, distribuir y manipular tal cantidad de datos, ya sea a través de servicios de Bases de Datos como puede ser servicios MySQL, la obtención de servidores y dispositivos para su almacenamiento, la creación de  aplicaciones web y servicios que permitan distribuirla o la gestión de los usuarios que puedan manipularla o consultarla supone una gran cantidad de agentes que intervienen en el funcionamiento que es necesario controlar y regular. Microsoft Active Directory supone una solución a esa problemática a través de un servicio de directorio como base de datos distribuida que permite la gestión, administración y localización de todos los recursos en red ~\cite{Capitulo1:Microsoft}.\\
+En los últimos años, empresas y organizaciones se han visto en la necesidad de gestionar de una manera eficiente y centralizada la información y recursos en red que disponen, activo fundamental para el correcto funcionamiento del negocio. El aumento masivo de dicha información además de la necesidad de crear, distribuir y manipular tal cantidad de datos, ya sea a través de servicios de bases de datos como puede ser servicios MySQL, la obtención de servidores y dispositivos para su almacenamiento, la creación de  aplicaciones web y servicios que permitan su distribución o la gestión de los usuarios que puedan manipularla o consultarla supone una gran cantidad de agentes que intervienen en el funcionamiento que es necesario controlar y regular. Microsoft Active Directory supone una solución a esa problemática a través de un servicio de directorio como base de datos distribuida que permite la gestión, administración y localización de todos los recursos en red ~\cite{Capitulo1:Microsoft}.\\
 
-Dentro del panorama actual, los servicios de Microsoft Active Directory se ha convertido en uno de los pilares que sostienen la organización de los recursos en red de la mayoría de las empresas vigentes así como uno de los principales objetivos para atacantes  debido a dicha importancia. Esto se puede comprobar en el principal interés que tienen los principales grupos de ciberdelincuentes como APT28, Cobalt Strike...  por esta infraestructura o los ataques de ransomware WannaCry, NotPetya, MBR-ONI, etc, que ponen a Active Directory en el punto de mira y centro de sus ataques. \cite{Capitulo1:Ransomware}. En los últimos años, se ha visto un aumento considerable de vulnerabilidades críticas que afectan a la seguridad y que detectan y hacen considerablemente más sencillo su explotación. \\
+Dentro del panorama actual, los servicios de Microsoft Active Directory se ha convertido en uno de los pilares que sostienen la organización de los recursos en red de la mayoría de las empresas vigentes así como uno de los principales objetivos para atacantes  debido a dicha importancia. Esto se puede comprobar en el principal interés que tienen los principales grupos de ciberdelincuentes como APT28, Cobalt Strike...  por esta infraestructura o los ataques de ransomware WannaCry, NotPetya, MBR-ONI, etc, que ponen a Active Directory en el punto de mira y centro de sus ataques \cite{Capitulo1:Ransomware}. En los últimos años, se ha visto un aumento considerable de vulnerabilidades críticas que afectan a la seguridad y que detectan y hacen considerablemente más sencillo su explotación. \\
 
-Por todo ello y con el fin de abordar esta problemática, el trabajo realizado se ha centrado en la revisión, análisis y prueba  en profundidad de las principales amenazas que suponen un problema de seguridad para Active Directory en sus diferentes versiones, técnicas como Pass-The-Hass, NTLM Relay, Kerberoast, etc que serán detalladas en los capítulos posteriores. Además, también se proporciona las directrices para la creación de un laboratorio local que permite la prueba de los ataques detallados así como la posibilidad de probar nuevas técnicas y ataques sin poner en riesgo la seguriidad de ningún entorno real u organización.\\
+Por todo ello y con el fin de abordar esta problemática, el trabajo realizado se ha centrado en la revisión, análisis y prueba en profundidad de las principales amenazas que suponen un problema de seguridad para Active Directory en sus diferentes versiones, técnicas como Pass-The-Hass, NTLM Relay, Kerberoast, etc que serán detalladas en los capítulos posteriores. Además, también se proporciona las directrices para la creación de un laboratorio local que permite la prueba de los ataques detallados así como la posibilidad de probar nuevas técnicas y ataques sin poner en riesgo la seguriidad de ningún entorno real u organización.\\
 
 
 \section{Estado del Arte}
@@ -15,14 +15,14 @@ Para el desarrollo del trabajo, se ha considerado las siguientes versiones propo
 \item \textbf{Windows Server 2012 R2}
 \end{itemize}
 
-Por lo tanto, se ha dejado la versión más antigua Windows Server 2008 como objeto de estudio o posible implantación en trabajo futuro al ser la versión más obsoleta. Aunque esto no implica que no haya empresas que aún siguen usando dicha versión. 
+Por lo tanto, se ha dejado la versión más antigua Windows Server 2008 como objeto de estudio o posible implantación en trabajo futuro al ser la versión más obsoleta. Aunque esto no implica que no haya empresas que aún siguen usando dicha versión. \\
 
 En cuanto a los ataques a analizar de manera detallada se han considerado los siguientes: 
 
 \begin{itemize}
-\item \textbf{Pass-The-Hass}
+\item \textbf{Pass-The-Hash}
 \item \textbf{NTLM Relay}
-\item \textbf{Overpass-The-Hass}
+\item \textbf{Overpass-The-Hash}
 \item \textbf{Pass-The-Ticket}
 \item \textbf{Golden/Silver Ticket}
 \item \textbf{Kerberoast}
@@ -33,7 +33,23 @@ Como se puede observar, la mayoría de los ataques no son específicos de Active
 
 \section{Objetivos}
 
+El objetivo principal de este trabajo es la creación de un laboratorio que provea la infraestructura necesaria para la replicación de las principales técnicas de ataque a Active Directory así como la revisión de las mismas sobre las diferentes versiones proporcionadas por Microsoft. La creación del laboratorio posibilita tanto a {\it Pentesters} o expertos en seguridad ofensiva realizar ejercicios de {\it Read Team} en entornos controlados o réplicas de un entorno real como a administradores de sistemas para probar nuevas configuraciones y reglas para equipos de {\it Blue Team}.\\
 
+Además, este trabajo tiene como objetivo la adquisición de conocimiento sobre Active Directory como punto de partida para futuras investigaciones. Como se ha visto en la introducción Active Directory es una parte fundamental de una empresa y es uno de los principales objetivos de atacantes, conocer los principales ataques y cómo está organizado es de gran importancia hoy en día, permitiendo aasí una correcta implementación que minimice los riesgos a los que está sometido.\\
 
 
 \section{Organización del Proyecto}
+
+El presente documento se divide en 7 capítulos, en los cuales en primera instancia se detallan los aspectos a tener en cuenta relacionados con Active Directoy, se detalla el laboratorio implementado, las pruebas que se van a realizar, la experimentación realizada así como los resultados obtenidos durante el trascurso:\\
+
+En el Capítulo 2 se detalla los aspectos relacionados con Active Directory, en primer lugar se define la autenticación y autorización en sistemas Windows tanto localmente como en dominio, se analizan los protocolos NT Lan Manager y Kerberos y la terminología relacionada con Active Directory.\\
+
+En el Capitulo 3 se desarrolla la topología que se ha elegido para la creación del laboratorio de pruebas con las diferentes versiones de Windows y su implementación.\\
+
+En el Capítulo 4 se detallan los ataques elegidos para realizar la experimentación.\\
+
+En el Capítulo 5, una vez detalladas tanto el laboratorio como las ataaques principales objeto de estudio, se muestran las diferentes pruebas realizas en las versiones de Windows especificadas en el estado del arte.\\
+
+En el Capítulo 6 se presentan y se discuten los resultados obtenidos.\\
+
+En el Capítulo 7, para finalizar el proyecto, se lleva a cabo una reflexión sobre el esfuerzo realizado y sus diferentes líneas de trabajo futuro. \\
