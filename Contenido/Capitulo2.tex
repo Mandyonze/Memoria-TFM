@@ -125,10 +125,6 @@ Microsoft Negotiate~\cite{Capitulo2:Negotiate} es un SSP que actua como intermed
 
 Actualmente, Neogtiate elige entre Kerberos y NTLM. Seleccionará el primero simpre y cuando haya conexión entre las dos partes implicadas en el proceso y el usuario haya especificado el Service Principal Name (SPN), un User Principal Name (UPN), o una cuenta de NetBIOS. En cambio, si se trata de una autenticación local utilizará NTLM.
 
-\subsection{Authentication Packages}
-
-Windows utiliza dos paquetes de autenticación de forma estandar, Kerberos y MSV1\_0. Como se ha comentado anteriormente Microsoft Windows utilizará el paquete MSV1\_0 para sistemas independientes (que no están unidos a un dominio). Este protocolo implementa la versión 2 del protocolo Lan Manager. Además, este paquete se utiliza para sistemas en red unidos a un dominio cuya versión sea anterior a Windows 2000. Por otro lado, el paquete de autenticación Kerberos, se utiliza en sistemas que son parte de un dominio. El paquete de Windows Kerberos se comunicará con un Controlador de Dominio donde se ejecutará y comprobará la validación de las credenciales. Kerberos está desarrolado siguiendo el RFC4120~\cite{Capitulo2:Kerberos}. Los protocolos soportados por ambos paquetes de autenticación serán detallados en los siguientes capítulos.
-
 \subsection{Security Account Manager (SAM)}
 
 Uno de los principales elementos que forman parte de la autenticación local es {\it Security Account Manager (SAM)}. La SAM es un archivo que tiene todos los Sistemas Windows y consiste en una base de datos que almacena las credenciales de los usuarios locales. Este fichero almacena el identificador de usuario, nombre de usuario y el hash de la contraseña. Este último puede ser LM o NT. El fichero se encuentra en:
@@ -171,7 +167,6 @@ Para listar las sesiones logon en un sistema se puede utilizar el comando {\it l
 
 User Account Control (UAC)~\cite{Capitulo2:UAC}~\cite{Capitulo2:UAC2}sirve para controlar cuando se están usando privilegios de adminstración. Como se ha comentado anteriormente al iniciar sesión desde una cuenta administrativa, se crean dos tokens de usuario: uno denominado {\it full access token} y un token secundario denominado {\it filtered access token}. Esto permite que los procesos ejecutados por este usuario se ejecuten con el segundo token siempre y cuando no necesiten privilegios de administración y así cumplir la política de mínimo privilegio posible. Esto lo podemos observar cuando se completa un inicio de sesión válido, el proceso {\it Explorer.exe} se ejecuta con el {\it filtered access token}. Cuando un proceso concreto necesita privilegios de administración, se requerirá una elvación de privilegios realizando una elevación de UAC. Como se puede ver en la Figura \ref{UAC} se ha ejecutado una terminal {\it (cmd.exe)} con privilegios administrativos y aparece el mensaje de Control de Cuentas de Usuario para elevar de privilegios. \\
 
-
 \begin{figure}[t!] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=10cm]{UAC.png}
@@ -191,9 +186,19 @@ Para controlar qué procesos necesitan privilegios especiales o cuales no, los S
 \item \textbf{Installer:} Nivel de integridad especial utilizado para la instalación de software. Este nivel es igual o superior a todos los niveles anteiores, lo que permite que este nivel puede desinstalar los demás objetos. 
 \end{itemize}
 
-\section{NT Lan Manager (NTLM)}
+\section{Authentication Packages}
 
-Como se ha comentado anteriormente, cuando un usuario inicia sesión localmente en Sistemas Windows utiliza el paquete de autenticacióni MSV1\_0~\cite{Capitulo2:MSV10}. LSA llama a este paquete para procesar los datos de inicio de sesión recogidos en el proceso WinLogon para su posteior comprobación con la información contenida en la base de datos SAM. En este apartado se va a detallar cómo gestiona Windows el almacenamiento de dichos datos a través de NT Lan Manager (NTLM). \\
+Windows utiliza dos paquetes de autenticación de forma estandar, Kerberos y MSV1\_0. Como se ha comentado anteriormente Microsoft Windows utilizará el paquete MSV1\_0 para sistemas independientes (que no están unidos a un dominio). Este protocolo implementa la versión 2 del protocolo Lan Manager. Además, este paquete se utiliza para sistemas en red unidos a un dominio cuya versión sea anterior a Windows 2000. Por otro lado, el paquete de autenticación Kerberos, se utiliza en sistemas que son parte de un dominio. El paquete de Windows Kerberos se comunicará con un Controlador de Dominio donde se ejecutará y comprobará la validación de las credenciales. Kerberos está desarrolado siguiendo el RFC4120~\cite{Capitulo2:Kerberos}. Los protocolos soportados por ambos paquetes de autenticación serán detallados en los siguientes capítulos.
+
+
+\subsection{NT Lan Manager (NTLM)}
+
+
+
+Como se ha comentado anteriormente, cuando un usuario inicia sesión localmente en Sistemas Windows utiliza el paquete de autenticacióni MSV1\_0~\cite{Capitulo2:MSV10}. LSA llama a este paquete para procesar los datos de inicio de sesión recogidos en el proceso WinLogon para su posterior comprobación con la información contenida en la base de datos SAM. 
+
+
+En este apartado se va a detallar cómo gestiona Windows el almacenamiento de dichos datos a través de NT Lan Manager (NTLM). \\
 
 \subsection{Windows Hashes}
 
@@ -207,5 +212,7 @@ Los hashes LM son la versión que s
 \section{Kerberos}
 
 \section{Active Directory}
+
+
 
 
