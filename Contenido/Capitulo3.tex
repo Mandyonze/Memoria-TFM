@@ -144,6 +144,7 @@ También existen diferentes claves de sesión negociadas entre el KDC y el clien
 
 \subsection{Protocolo de autenticación}
 
+En esta sección se va a explicar el protocolo de autenticación, para este caso de usuo el cliente solicita un TGT para autenticarse y posteriormente utiliza ese TGT para pedir un ticket de servicio para poder acceder a una aplicación. Se va a detallar el proceso utilizado y los paquetes intercambiados~\cite{Capitulo3:Kerberos5}. Cabe destaca que Kerberos utiliza  TCP y UDP para el intercambio de paquetes. El KDC utiliza los puertos TCP/88 y UDP/88.   
 
 \begin{figure}[t!] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
@@ -153,30 +154,42 @@ También existen diferentes claves de sesión negociadas entre el KDC y el clien
 \label{Kerberos}
 \end{figure}
 
-\begin{Enumerate}
-\item Antes de acceder a un servicio, el c
-\end{Enumerate}
+\begin{enumerate}
 
+\item En primer lugar, el cliente envía una petición de autenticación al servidor KDC a través del paquete \textbf{KRB\_AS\_REQ}. El objetivo de este paquete es iniciar la comunicación y transmitir las credenciales del usuario a autenticar. Para ello se transmite la siguiente información:
 
+\textbf{- Timestamp:} Sirve para evitar ataques de replay. Está firmado con la clave NTLM del cliente.\\
+\textbf{- Username:} Información sobre el nombre del usuario que se está autenticado.\\
+\textbf{- Service Principal Name (SPN)~\cite{Capitulo3:SPN}:} Indicador único de la instancia del servicio asociado a la cuenta krbtgt. \\
+\textbf{- Nonce:} Número aleatorio generado por el usuario. \\
 
+\item El {\it Authentication Server (AS)} recibe el paquete anterior y procede a la autenticación. Para ello busca el nombre de usuario en la base de datos del KDC y utiliza el hash de la contraseña almacenada para descifrar el timestamp, si no se produce ningún error al descifrar y el timestamp coincide con la hora actual (con un desfase máximo de 5 minutos) la autenticación se completa correctamente. \\
 
+Una vez autenticado el usuario, el AS prepara el paquete a enviar denominado \textbf{KRB\_AS\_REP}. Este paquete contiene la siguiente información:
 
+\textbf{- Username:} Información sobre el nombre del usuario que se está autenticado.\\
+\textbf{- Datos cifrados:} Información cifrada con la clave del usuario que incluye: Nombre del usuario, clave de sesión, fecha de expiración de la sesión, SPN y el nonce enviado por el cliente previamente. \\
+\textbf{- Ticket TGT:} Ticket cifrado con la clave del KDC. El ticket incluye: Nombre del usuario, clave de sesión, fecha de expiración del ticker TGT y PAC. \\
 
+\item Una vez autenticado y en disposición del TGT. Para poder utilizar un servicio es necesario obtener un TGS. Para ello, el usuario envía un paquete \textbf{KRB\_TGS\_REQ} con la siguiente información:
 
+\textbf{- SPN:} Indicador único de la instancia del servicio asocido a la cuenta krbtgt. \\
+\textbf{- Nonce:} Número aleatorio generado por el usuario. \\
+\textbf{- Ticket TGT}
+\textbf{- Datos cifrados:} Datos cifrados con la clave del usuario que incluye: Nombre de usuario y timestamp. \\
 
+\item {\it Ticket Granting Server} examina la petición, si esta es correcta envía el paquete \textbf{KRB\_TGS\_REP} con el TGS y la siguiente información:
 
+\textbf{- Username}. \\
+\textbf{- Ticket TGS:} Ticket cifrado con la clave del servicio. El ticket incluye: Clave de sesión del servicio, nombre de usuario, fecha de expiración del ticket TGS y PAC. \\
+\textbf{- Datos cifrados:} Información cifrada con la clave de sesión que incluye: Clave de sesión del servicio, fecha de expiración del ticket TGS y Nonce enviado previamente.
 
+\item Una vez obtenido el ticket TGS, el usuario podrá presentarlo al servicio correspondiente, para ello debe enviar a dicho servicio el paquete \textbf{KRB\_AP\_REQ} con la siguiente información: 
 
+\textbf{- Ticket TGS}.\\
+\textbf{- Datos cifrados:} Información cifrada con la clave de sesión del servicio que incluye: Nombre de usuario y timestamp. \\
 
+\item Por último, el servidor contesta con el paquete \textbf{KRB\_AP\_REP}. Este paquete es opcional y sólo se envía si es necesaaria la autenticación mutua entre el cliente y el servicio. 
 
-
-
-
-
-
-
-
-
-
-
+\end{enumerate}
 
