@@ -1,0 +1,56 @@
+Esta sección detalla en profundidad los paquetes de autenticación utilizados en sistemas basados en Windows. Los paquetes de autenticación son {\it Dynamic-Link Libraries (DLLs)} lanzadas por el proceso LSA durante un inicio de sesión que se encargan de analizar y validar las credenciales introducidas por el usuario, crear una nueva {\it logon session} y pasar la información al proceso LSA para que este cree el {\it Access Token} correspondiente si la validación ha sido correcta. Windows permite la carga de multiples paquetes de autenticación lo que permite que LSA siporte multiples procesos de inicio de sesión diferentes. En este capítulo se van a detallar los paquetes de autenticación utilizados por defecto: MSV1\_0 y Kerberos. Además, se va a detallar la forma que tiene Windows de almacenar las contraseñas en el sistema.
+
+\section{Windows hashes}
+
+Los Sistemas Windows, en lugar de almacenar las contraseñas en texto plano, algo que sería un gran problema de seguridad utilizan los siguientes algoritmos de hash~\cite{Capitulo3:Hashes}:
+
+\subsection{Hashes Lan Manager (LM)}
+
+El algoritmo Lan Manager (LM) para realizar la función hash de las contraseñas almacenadas en Windows fue una de las primeras implementaciones que desarrolló Windows para mantener cifradas las contraseñas. Hoy en día está práctiacamente en desuso y desde 2017 se recomienda desactivar la opción de que se guarden las credenciales de esta forma~\cite{Capitulo3:LMDeprecated}. 
+
+\subsubsection{Algoritmo}
+
+El algoritmo de hash utilizado realiza el siguiente procedimiento: 
+
+\begin{itemize}
+\item Convertir todos los carácteres a letras mayúsculas.
+\item Añadir un padding de carácteres nulos hasta que tenga una longitud de 14 carácteres. 
+\item Dividir la contraseña en dos partes de 7 carácteres cada una. 
+\item Crear dos DES keys para cada parte. 
+\item Cifrar a través de DES las partes anteriores con el string  "KGS!@\#\$\%".
+\item Concatenar ambos strings.
+\end{itemize}
+
+\subsection{Hashes NT}
+
+Los hashes NT, también conocidos como hashes NTLM, es la forma que utiliza atualmente Windows para alamcenar las contraseñas de los usuarios del sistema. Estos hashes están almacenados en la SAM si se trata de un equipo local o en el fichero NTDS del Active Directory si se trata de un equipo en dominio. A través de la obtención de este tipo de hashes se puede realizar un ataque de Pass-The-Hash (se detallara en los siguientes capítulos).
+
+\subsubsection{Algoritmo}
+
+Windows encodea la contraseña del usuario con UTF-16 Little Endian y posteiormente realiza un hash con el algoritmo MD4: 
+
+\begin{itemize}
+\item MD4(UTF-16-LE(password))
+\end{itemize}
+
+\section{MSV1\_0}
+
+MSV1\_0~\cite{Capitulo3:MSV10} es el paquete de autenticación proporcionado por Windows e implementa la familia de protoclos Lan Manager versión 1 y 2 (LM y NT) y Net Lan Manager versión 1 y 2 (NTLMv1 y NTLM v2)~\cite{Capitulo3:NTLM}. \\
+
+Este paquete de autenticación soporta tanto inicio de sesión de forma local como inicio de sesión para cuentas y servicios en dominios. El paquete MSV1\_0 ejecuta una aquitectura cliente/servidor, es decir, el cliente es el que recibe las credenciales (username y el hash de la contraseña) y las valida frente al servidor. \\
+
+Cuando se ejecuta localmente cliente y servidor están representados por la misma máquina que se encarga de recoger las credenciales proporcionadas por el usuario a través de los {\it Credential Providers} y compararlas con las credenciales introducidas por el usuario cuando creó la cuenta y que están almacenadas en la SAM, si ambas contraseñas son iguales el proceso de autenticación es correcto. \\
+
+En inicio de sesión en dominio el cliente representa la máquina local y el servidor representa el Domain Controller donde está configurado Active Directory. El cliente recoge las credenciales y las pasa por el canal de comunicación seguro creado por el proceso {\it Winlogon.exe} y las comunica con la instancia de MSV1\_0 ejecutada en el Domain Controller. El cliente delega la comprobación de las credenciales al Domain Controller, esto se denomina {\it Pass-Through}. La instancia de MSV1\_0 del Domain Controller realiza la validación de las credenciales comprobando la información recibida con los datos almacenados el la base de datos del Domain Controller y devuelve la información a la instancia ejecutada en local. Si la validación ha sido correcta, el paquete MSV1\_0 local devuelve la información al proceso LSA local. \\
+
+Windows ha implementado los protocolos de desafío/respuesta NTLMv1 y NTLMv2 para la intercambiar las credenciales introducidas por el usuario entre la máquina local y el Domain Controller en lugar de intermbiar las credenciales directamente. A continuación se van a detallar ambos protocolos. 
+
+\subsection{Net NT Lan Manager Versión 1 (Net-NTLMv1)}
+
+
+
+\subsection{Net NT Lan Manager Versión 2 (Net-NTLMv2)}
+
+
+
+\section{Kerberos}
