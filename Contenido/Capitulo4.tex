@@ -1,0 +1,89 @@
+Directotio Activo del inglés {\it Active Directory (AD)}, corresponde a la 
+
+Active Directory, como ya se ha comentado en la introducción a este trabajo, es el entorno más utilizado por empresas y organizaciones a nivel mundial para la gestión y administración centralizada de redes y recursos. Para ello, Microsoft, desde Microsoft Windows Server 2000, propone un servicio de directorio utilizado para gestionar la in\-for\-ma\-ción sobre todos los recursos en red que dispone una empresa y permite a los usuarios y grupos de usuarios aceeder de forma jerárquica a dichos recursos. La in\-for\-ma\-ción admisitrada por Active Directory se puede agrupar en tres grupos princiaples: recursos (impresoras), servicios (aplicaciones web, aplicaciones de correo electróncio, bases de datos, etc.) y usuarios (cuentas, credenciales, grupos, etc.). Con esta in\-for\-ma\-ción, es posible crear y adminsitrar dominios, usuarios y todos los objetos englobados dentro de la misma red. En este capítulo se va a introducir los términos generales y conceptos clave y la creación de un laboratorio local que permita la ejecución de los principales ataques sobre Active Directory.
+
+
+
+
+
+
+\section{Términos y conceptos clave}
+
+
+\subsubsection{Active Directory Domain Services (ADDS)}
+\subsubsection{Dominio (Domain)}
+
+Un dominio, del inglés {\it Domain}~\cite{Capitulo4:Domain} es definido como un ``contenedor lógico'', es decir, es una estructura lógica que contiene los siguientes componentes:
+
+\begin{itemize}
+\item Una estructura jerárquica para usauarios y grupos en función de los privilegios de los mismos.
+\item Servicios (vistos anteriormente) que proveen capacidades de autenticación y autorización.
+\item Distintas políticas de seguridad que se aplican a usuarios y objetos.
+\item Un registro DNS que identifica inequívocamente el dominio, como puede ser empresa.com, ad.empresa.com. Este nombre será requisito para iniciar sesión en una cuenta de dominio utilizándose como parte del nombre del usuario. 
+\end{itemize}
+
+Estos componentes y objetos están almacenados en la base de datos de Active Directory. Se puede considerar un dominio como un límite administrativo de estos objetos. Un dominio puede abarcar diferentes ubicaciones tanto físicas como en red y estar compuesto por una multitud de objetos.
+
+\subsubsection{Árbol (Domain Tree)}
+
+En relación con el término anterior, un árbol del inglés {Domain Tree}, son colecciones de dominios que se agrupan como una estructura jerárquica. Un arbol se le puede considerar como una serie de dominios conectados jerárquicamente a través de usar el mismo espacio de nombres DNS. Un ejemplo sería, si al dominio anterior: empresa.com le añadimos un ``hijo'' denominado recursoshumanos.empresa.com se crea un árbol de dominios compuesto por un dominio padre o root (empresa.com) y un hijo o child (recursoshumanos.empresa.com). Estos dominios forman parte del mismo árbol y se crean automáticamente relaciones de confianza entre ellos. En un Active Directory pueden coexisstir multitud de árboles de dominio diferentes. 
+
+\subsubsection{Bosque (Forest)}
+
+Un bosque, del inglés {\it Forest}, a grandes rasgos es una colección de árboles de dominio que comparten el mismo {\it schema}, misma estructura lógica, {\it global catalog} y configuración. Alguno de estos términos será introducido a continuación. Todos los dominios pertenecientes a un mismo forest, establecen una relación de confianza transitiva. Cabe destacar, que cuando se crea una instacia de Active Directory por primera vez y se crea un dominio también se está creando implícitamente un forest. 
+
+\subsubsection{Schema}
+
+Un {\it schema} en Active Directory se define como a {\it forest-wide template}, es decir, una plantilla aplicable al dominio que define los objetos y propiedades alojados en el Active Directory. Este esquema debe estar bien configurado para evitar comprometer la seguridad de todos los dominios del forest. Para su administración existe un grupo especial denominado {\it Schema Admins} que puede editar y configurar dicho schema. 
+
+\subsubsection{Fully Qualified Domain Name (FQDM)}
+
+Fully Qualified Domain Name (FQDN) es la dirección completa que identifica un host o recurso, este está compuesto por la unión del nombre del host {\it hostname} y el dominio. En el ejemplo anterior, un equipo denominado Cliente01 su FQDN sería Cliente01.empresa.com. 
+
+\subsubsection{Domain Controller (DC)}
+
+Un controlador de dominio, del inglés {\it Domain Controller (DC)}, es la parte fundamental de Active Directory, corresponde a servidores de Windows que contienen la base de datos Active Directory y por lo tanto almacenan toda la información correcpondiente a dominios, domain trees, forests, usuarios, servicieos, etc. 
+
+\subsubsection{Objetos (Objects)}
+
+Todos los elementos alamacenados en una base de datos Active Directory se almacenan en forma de objetos, cada objeto tiene un tipo diferente que le diferencia de otros objetos. Cada objeto almacenado tiene un SID diferente que se utiliza para admitir o denegar el acceso del objeto a un recurso del dominio. Los objetos creados por defecto en cualqueir dominio se pueden agrupar de la siguiente forma: 
+
+\begin{itemize}
+\item Unidades organizativas, del inglés {\it Organizational Unit (OU)}. 
+\item Usuarios.
+\item Ordenadores. 
+\item Grupos de usuarios.
+\item Contactos.
+\item Carpetas compartidas. 
+\item Impresoras compartidas.
+\end{itemize}
+
+\subsubsection{Organizational Unit (OU)}
+
+Unidades organizativas, del inglés {\it Organizational Unit (OU)} son contenedores de diferentes objetos del mismo dominio como puede ser otros contenedores, cuentas de usuario, grupos, etc. Un administrador del dominio puede crear unidades organizativas y aplicarle diferentes directivas de grupo que se aplicarán a todos los objetos de esta unidad, esto permite una administración más eficiente del Active Directory. 
+
+\subsubsection{Global Catalog}
+
+
+\section{Laboratorio de Active Directory}
+
+
+
+\subsection{Instalación y configuración de Windows Server 2019}
+
+Para la creación 
+
+
+Para la administración y gestión de Active Directory se va a utilizar la versión de Windows Server 2019, como uno de los objetivos de este proyecto es proporcionar unas directrices para que cualquier investigador pueda crear el laboratorio se va a utilizar la VirtualBox para la gestión de las máquinas virtuales y las versiones de prueba que proporciona Microsoft. 
+
+\subsubsection{Requisitos}
+
+
+
+
+
+\begin{enumerate}
+\item 
+\end{enumerate}
+
+

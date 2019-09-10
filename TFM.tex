@@ -24,8 +24,7 @@
 
 \hyphenation{ciber-delincuentes pro-por-cionadas com-pro-meter ges-tio-nar la-bo-ra-torio net-working pro-por-cio-na-do cen-tra-li-za-da im-ple-men-ta-do he-rra-mien-tas in-fra-es-truc-tu-ra Di-rec-to-ry im-ple-men-ta-cio-nes auten-ti-ca-cion u-ti-li-za-dos} 
 \PassOptionsToPackage{hyphens}{url}
-
-
+\usepackage{float}
 
 \usepackage{cite}
 
@@ -170,7 +169,7 @@ hmargin=3cm
 % DISEÑO DE TABLAS. Puedes elegir entre el estilo para ingeniería o para ciencias sociales y humanidades. Por defecto, está activado el estilo de ingeniería. Si deseas utilizar el otro, comenta las líneas del diseño de ingeniería y descomenta las del diseño de ciencias sociales y humanidades
 \usepackage{multirow} % permite combinar celdas 
 \usepackage{caption} % para personalizar el título de tablas y figuras
-\usepackage{floatrow} % utilizamos este paquete y sus macros \ttabbox y \ffigbox para alinear los nombres de tablas y figuras de acuerdo con el estilo definido. Para su uso ver archivo de ejemplo 
+% \usepackage{floatrow} % utilizamos este paquete y sus macros \ttabbox y \ffigbox para alinear los nombres de tablas y figuras de acuerdo con el estilo definido. Para su uso ver archivo de ejemplo 
 \usepackage{array} % con este paquete podemos definir en la siguiente línea un nuevo tipo de columna para tablas: ancho personalizado y contenido centrado
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 \DeclareCaptionFormat{upper}{#1#2\uppercase{#3}\par}
@@ -377,7 +376,8 @@ hmargin=3cm
 \chapter{Paquetes de autenticación}
 \input{Contenido/Capitulo3}
 
-
+\chapter{Active Directory}
+\input{Contenido/Capitulo4}
 
 
 %----------
@@ -400,8 +400,24 @@ hmargin=3cm
 %----------	
 
 % Si tu trabajo incluye anexos, puedes descomentar las siguientes líneas
-%\chapter* {Anexo x}
-%\pagenumbering{gobble} % Las páginas de los anexos no se numeran
+\chapter*{Instalación Windows Server 2019 (DC01)}
+\pagenumbering{gobble} % Las páginas de los anexos no se numeran
+\addcontentsline{toc}{chapter}{Anexo 1: Instalación Windows Server 2019 (DC01)}
+\input{Contenido/Anexo1.tex}
+
+\chapter*{Instalación Windows 10 Enterprise (Cliente01)}
+\addcontentsline{toc}{chapter}{Anexo 2: Instalación Windows 10 Enterprise (Cliente01)}
+\input{Contenido/Anexo2.tex}
+
+
+\chapter*{Instalación Debian 10 (Gateway)}
+\addcontentsline{toc}{chapter}{Anexo 3: Instalación Debian 10 (Gateway)}
+\input{Contenido/Anexo3.tex}
+
+
+\chapter*{Instalación Kali Linux 2019.3 (Atacante01)}
+\addcontentsline{toc}{chapter}{Anexo 4: Instalación Kali Linux 2019.3 (Atacante01)}
+\input{Contenido/Anexo4.tex}
 
 
 
