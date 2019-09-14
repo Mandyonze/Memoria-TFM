@@ -186,71 +186,70 @@ Para ejecutar este ataque, la máquina Atacante01 tiene que estar en la misma re
 
 \section{Overpass The Hash}
 
-La técnica {\it Overpass the hash}, también conocida como {\it Pass the key (PTK)} es la equivalencia a {\it Pass the hash} para el protocolo de autenticación Kerberos. Como se ha visto anteriormente, durante el intercambio de paquetes, el usuario cifra una marca de tiempo o {\it timestamp}. En función de la versión de Kerberos se va a utilizar un secreto u otro, en este caso en las versiones más antiguas utiliza un secreto RC4 que equivale al Hash NT del usuario, en versiones más modernas utiliza claves de AES128 y AES256. Por lo tanto, con el Hash NT del usuario se puede obtener un Ticket TGT y poder realizar la autenticación correctamente. \\
+La técnica {\it Overpass the hash}, también conocida como {\it Pass the key (PTK)} es la equivalencia a {\it Pass the hash} para el protocolo de autenticación Kerberos. Como se ha visto anteriormente, durante el intercambio de paquetes, el usuario cifra una marca de tiempo o {\it timestamp}. En función de la versión de Kerberos se va a utilizar un secreto u otro, en este caso en las versiones más antiguas utiliza un secreto RC4 que equivale al Hash NT del usuario, en versiones más modernas utiliza claves de AES128 y AES256. Por lo tanto, con el Hash NT del usuario se puede obtener un Ticket TGT y poder realizar la autenticación correctamente.
 
 \subsubsection{Experimentación}
 
 \begin{enumerate}
-\item Figura \ref{OTH1}
+\item En primer lugar, partimos desde una {\it Reverse Shell} interactiva con privilegios de administrador del usuario {\it mariarperez} y tratamos de listar el directorio {\it C\$} del DC01 a través de protocolo de Kerberos(Figura \ref{OTH1}).
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{OTH/OTH1.png}
 \end{center}
-\caption{YYYY.}
+\caption{Reverse Shell interactiva.}
 \label{OTH1}
 \end{figure}
 
-\item Figura \ref{OTH2}
+\item Como se puede ver en Wireshark, el intercambio de paquetes KRB5 falla (Figura \ref{OTH2}).
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{OTH/OTH2.png}
 \end{center}
-\caption{YYYY.}
+\caption{Intercambio de paquetes de Kerberos.}
 \label{OTH2}
 \end{figure}
 
-\item Figura \ref{OTH3}
+\item Repetimos los pasos hechos en {\it Pass the hash}, listamos las sesiones activas y obtenemos el hash de la contraseña MD5 (Figura \ref{OTH3} y Figura \ref{OTH4}).
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{OTH/OTH3.png}
 \end{center}
-\caption{YYYY.}
+\caption{Comandos Mimikatz para listas sesiones activas.}
 \label{OTH3}
 \end{figure}
 
-\item Figura \ref{OTH4}
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{OTH/OTH4.png}
 \end{center}
-\caption{YYYY.}
+\caption{Hash del usuario víctima.}
 \label{OTH4}
 \end{figure}
 
-\item Figura \ref{OTH5}
+\item Realizamos el ataque a través del mismo comando que en {\it Pass the hash} (Figura \ref{OTH5}).
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{OTH/OTH5.png}
 \end{center}
-\caption{YYYY.}
+\caption{Pash the hash a través de la herramienta Mimikatz.}
 \label{OTH5}
 \end{figure}
 
-\item Figura \ref{OTH6}
+\item Se ejecuta el comando especificado en el comando anterior, en este caso un {\it cmd.exe} en el que podemos acceder al directorio (Figura \ref{OTH6}).
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{OTH/OTH6.png}
 \end{center}
-\caption{YYYY.}
+\caption{Ataque over-pass the hash realizado correctamente..}
 \label{OTH6}
 \end{figure}
 
-\item Figura \ref{OTH7}
+\item En los paquetes KRB5 intercambiados podemos ver que se usa RC4 (Figura \ref{OTH7}) y que la autenticación se completa correctamente recibiendo así un Ticket TGT. 
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{OTH/OTH7.png}
 \end{center}
-\caption{YYYY.}
+\caption{Intercambio de paquetes de Kerberos.}
 \label{OTH7}
 \end{figure}
 
