@@ -8,7 +8,7 @@ La idea principal del ataque {\it Pass the hash (PtH)}~\cite{Capitulo5:PtHMitre}
 
 Como se ha observado en los capítulos previos, cuando un usuario se autentica a través del paquete de autenticación NTLM, para su autenticación el cliente cifra un secreto o nonce compartido por el servidor con el Hash NT del usuario~\cite{Capitulo5:HackingWindows}, por lo tanto, no es necesario conocer la contraseña en claro. Además, los hashes del usuario se mantiene en memoria (a través del proceso LSASS) lo que permite que, una vez autenticado un usuario legítimo, cuando el sistema requiera otra autenticación por acceder a un recurso se haga de manera trasparente al usuario.\\ 
 
-Por lo tanto, para que llevar a cabo esta técnica, es necesario que el atacante obtenga el Hash NT del usuario al que quiera suplantar. Esta hash puede ser obtenido a través del volcado de la base de datos SAM \footnote{C:\textbackslash{}windows\textbackslash{}system32\textbackslash{}config\textbackslash{}SAM}, de copias de seguraidad o {\it backups} de esta \footnote{C:\textbackslash{}windows\textbackslash{}repair\textbackslash{}sam}, el volcado de las credenciales almacenadas por el usuario en el proceso LSASS (tiene que haber una logon sessian con dicho usuario) o a través de interceptar los mensajes {\it Challende-Response} cuando se autentica un usuario~\cite{Capitulo5:PtH}. \\
+Por lo tanto, para que llevar a cabo esta técnica, es necesario que el atacante obtenga el Hash NT del usuario al que quiera suplantar. Esta hash puede ser obtenido a través del volcado de la base de datos SAM \footnote{C:\textbackslash{}windows\textbackslash{}system32\textbackslash{}config\textbackslash{}SAM}, de copias de seguraidad o {\it backups} de esta \footnote{C:\textbackslash{}windows\textbackslash{}repair\textbackslash{}sam}, el volcado de las credenciales almacenadas por el usuario en el proceso LSASS (tiene que haber una logon sessian con dicho usuario), a través del volcado de credenciales de la base de datos NTDS  o a través de interceptar los mensajes {\it Challende-Response} cuando se autentica un usuario y crackeado el Hash NTLM para llegar a sacar el hash NT~\cite{Capitulo5:PtH}. \\
 
 Como abstración de la capacidad de este ataque, se puede decir que {\it Pass the hash (PtH)} permite de manera efectiva la suplantación de cualquier empleado o cliente de una empresa, sin la necesidad de conocer la contraseña, únicamente conociendo el Hash NT de esta. Por lo tanto, el uso de contraseñas robustas no protegería de este tipo de ataques. \\
 
@@ -94,10 +94,174 @@ Una vez obtenido una {\it Reverse Shell} interactiva con privilegios de administ
 
 \section{NTLM Relay}
 
+Hoy en día los ataques de {\it NTLM Relay} son un técnica muy utilizada por {\it Pentesters} y atacantes permitiendo el acceso a activos o recursos crítico incluso si la organización dispone de buenas prácticas para la gestión de la seguridad. A grandes rasgos, esta técnica de movimiento lateral o vertical se puede sintetizar como un ataque de {\it pass the hash} pero a nivel de red. \\ 
+
+Para entender este ataque es necesario entender el protocolo {\it Challenge - Respuesta} utilizado por NTLM. Aunque se ha detallado anteriormente se puede sintetizar en las siguientes fases: 
+
+\begin{enumerate}
+\item El cliente intenta iniciar sesión en un servicio o recurso.
+\item El servidor responde con un desafío o {\it challenge}, es decir, el cliente dice, si eres quién dice ser, cifra este desafío con tu hash de la contraseña..
+\item El cliente cifra el desafío.
+\item El servidor compueba este cifrado descifradno el desafió ya que dispone del hash del usuario, si es correcto verifica al usuario. 
+\end{enumerate}
+
+En un ataque de NTLM Relay, el atacante se sitúa como intermediario entre los paquetes intercambiados en el proceso anterior. Para ello, selecciona el recurso o activo que quiere autenticarse y espera a que un usuario legítimo intente conectarse a él. A continuación se va a detallar cómo cambia el esquema de autenticación NTLM cuando se está produciendo un ataque de {\it NTLM Relay}~\cite{Capitulo5:NTLMRelay}:
+
+\begin{enumerate}
+\item En primer lugar, el cliente intenta conectarse a un recuso, esta petición es interceptada por un atacante y reenviada al servidor objetivo. 
+\item El servidor contesta con un desafío, este desafío también es interceptado por el atacante y reenviado a la víctima.
+\item La víctima cifra con el Hash NT de la contraseña el desafío y crea un paquete que será enviado de nuevo al atacante y este lo reenviará al servidor. 
+\item El servidor comprueba que el desafío se ha cifrado correctamente y concede el acceso a dicho recurso. Por lo tanto, el atacante tiene acceso a ese recurso ya que dispone del paquete con el desafío cifrado. 
+\item Por último, el atacante manda un paquete a la vítima denegando el acceso a ese recurso. 
+\end{enumerate}
+
+Como es de esperar, este tipo de ataques ha sido perseguido de cerca por Microsoft y ha implementado medidas que dificultan o imposibilitan este ataque. Una de ellas es el parche MS08-068~\cite{Capitulo5:MS08-068} que imposibilita que se puede retrasmitir un Hash NTLM a la misma máquina de la que se obtuvo imposibilitando así los ataques de NTLM Replay reflejado. Sin embargo, estos hashes se pueden retrasmitir a otros servicios o máquinas. \\
+
+Para replicar este tipo de ataque sen el laboratorio local se va a utilizar la herramienta Responder~\cite{Capitulo5:Responder}. Antes de definir esta herramienta es necesario hablar de los {\it Windows Name Resolution}, es decir, de la forma que utilizada Microsoft para resolver los nombres de dominio. Para ello, se utilizan los protocolos: {\it Link Local Multicast Name Resolution (LLMNR)} y {\it NetBIOS over TCP/IP Name Service}. La herramienta Responder realiza un ``envenamiento'' de estos protocolos y permite obtener la credenciales en red. Esta herramienta crea servidores de autenticación como puede ser SMB, MYSQL, HTTP(s), FTP... y obliga a la víctima a enviar las credenciales a estos servidores y así poder obtenerlas. \\
+
+Por lo tanto, con la herramienta Responder podemos obtener los Hashes NTLM de una conexión de autenticación y retrasmitirlos a través de otra herramienta como puede ser {\it ntlmrelayx.py} de la librería de Impacket o {\it MultiRelay.py}. \\
+
+Una de las limitaciones de este ataque es que la medida que implementó Windows: SMB Signing~\cite{Capitulo5:SMBSigning} debe estar desactivado. Esta medida firma los paquetes SMB para evitar que estos sean modificados durante su retrasmisión. Se puede suponer que esta medida esta desactivada ya que en la mayoría de los Sistemas Windows están desactivadas a escepción de Windows Server como se puede ver en la Figura \ref{NTLMRelay1}.
+
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{NTLMRelay/NTLMRelay1.png}
+\end{center}
+\caption{SMB Signing desactivado por defecto en Cliente01.}
+\label{NTLMRelay1}
+\end{figure}
+
+\subsubsection{Experimentación}
+
+Para ejecutar este ataque, la máquina Atacante01 tiene que estar en la misma red, para ello, desde VirtualBox añadimos una nueva tarjeta de red que esté conectada a ADNET y le asignamos la dirección IP: 192.168.0.5.
+
+\begin{enumerate}
+
+\item En primer lugar, descargamos la última versión de Responder de ~\cite{Capitulo5:Responder} o se utiliza la versión que trae por defecto Kali Linux, en cualquier caso se debe editar el archivo {\it Responder.conf} y deshabilitar las opciones SMB y HTTP para que estas peticiones sean recogidas por {\it ntlmrelayx.py} (Figura \ref{NTLMRelay2}
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{NTLMRelay/NTLMRelay2.png}
+\end{center}
+\caption{Archivo de configuración Responder.conf.}
+\label{NTLMRelay2}
+\end{figure}
+
+\item Una vez editada la configuración ejecutamos el Responder. En paralelo en otra terminal ejecutamos el {\it ntlmrelayx.py} (Figura \ref{NTLMRelay3}) a través de los siguientes comandos:
+
+\begin{listing}[style=consola, numbers=none]
+# .\Responder.py -I eth2 -w -r -f -v
+# ntlmrelayx.py -t 192.168.0.3 -smb2support
+\end{listing}
+
+-I eth2 - Corresponde con la interfaz de red conectada a la ADNET.
+-t 192.168.0.3 - Corresponde al target, en este caso DC01. 
+
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{NTLMRelay/NTLMRelay3.png}
+\end{center}
+\caption{Responder y ntlmrelayx.py.}
+\label{NTLMRelay3}
+\end{figure}
+
+\item Para que este ataque funcione se necesita la interacción del usuario víctima, en este caso bastaría que el usuario con privilegios de Domain Admin se conectara a un recurso inexistente como puede ser \footnote{\textbackslash{}\textbackslash{}test\textbackslash{}C\$} (Figura \ref{NTLMRelay4}).
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{NTLMRelay/NTLMRelay4.png}
+\end{center}
+\caption{Interacción del usuario.}
+\label{NTLMRelay4}
+\end{figure}
+
+\item Como se puede ver en la Figura \ref{NTLMRelay5} el ataque se ejecuta correctamente y se vuelca los datos de la SAM del Domain Controller. 
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{NTLMRelay/NTLMRelay5.png}
+\end{center}
+\caption{Volcado de la SAM.}
+\label{NTLMRelay5}
+\end{figure}
+
+\end{enumerate}
+
 \section{Overpass The Hash}
+
+La técnica {\it Overpass the hash}, también conocida como {\it Pass the key (PTK)} es la equivalencia a {\it Pass the hash} para el protocolo de autenticación Kerberos. Como se ha visto anteriormente, durante el intercambio de paquetes, el usuario cifra una marca de tiempo o {\it timestamp}. En función de la versión de Kerberos se va a utilizar un secreto u otro, en este caso en las versiones más antiguas utiliza un secreto RC4 que equivale al Hash NT del usuario, en versiones más modernas utiliza claves de AES128 y AES256. Por lo tanto, con el Hash NT del usuario se puede obtener un Ticket TGT y poder realizar la autenticación correctamente. \\
+
+\subsubsection{Experimentación}
+
+\begin{enumerate}
+\item Figura \ref{OTH1}
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{OTH/OTH1.png}
+\end{center}
+\caption{YYYY.}
+\label{OTH1}
+\end{figure}
+
+\item Figura \ref{OTH2}
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{OTH/OTH2.png}
+\end{center}
+\caption{YYYY.}
+\label{OTH2}
+\end{figure}
+
+\item Figura \ref{OTH3}
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{OTH/OTH3.png}
+\end{center}
+\caption{YYYY.}
+\label{OTH3}
+\end{figure}
+
+\item Figura \ref{OTH4}
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{OTH/OTH4.png}
+\end{center}
+\caption{YYYY.}
+\label{OTH4}
+\end{figure}
+
+\item Figura \ref{OTH5}
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{OTH/OTH5.png}
+\end{center}
+\caption{YYYY.}
+\label{OTH5}
+\end{figure}
+
+\item Figura \ref{OTH6}
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{OTH/OTH6.png}
+\end{center}
+\caption{YYYY.}
+\label{OTH6}
+\end{figure}
+
+\item Figura \ref{OTH7}
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{OTH/OTH7.png}
+\end{center}
+\caption{YYYY.}
+\label{OTH7}
+\end{figure}
+
+
+\end{enumerate}
+
+
+
 
 \section{Pass The Ticket}
 
 \section{Golden/Silver Ticket}
 
-\section{Kerberoast}
+asection{Kerberoast}
