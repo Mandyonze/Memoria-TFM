@@ -214,16 +214,244 @@ Una buena práctica es cambiar el nombre a los Sistemas Windows, esto nos facili
 
 \subsection{Creación y configuración del Active Directory}
 
+En esta sección se va a detallar la instalación y configuración de Active Directory en Windows Server 2019 en la máquina virtual DC01.
+
+\subsubsection{Intalación y configuración}
+
+\begin{enumerate}
+
+\item La instalación de un AD DS se puede realizar desde el Dashboard integrado en Windows Server 2019. Para ello, se selecciona {\it Add roles and features} (Figura \ref{DC01-AD1}).
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{DC01/AD1.png}
 \end{center}
-\caption{Cambio de nombre Cliente01}
+\caption{Instalación de AD DS - Add roles and features.}
 \label{DC01-AD1}
 \end{figure}
 
 
+\item Para el tipo de instalación se va a elegir {\it Roled-based or feature-based installation} (Figura \ref{DC01-AD2}).
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{DC01/AD2.png}
+\end{center}
+\caption{Instalación de AD DS - Roled-based installation.}
+\label{DC01-AD2}
+\end{figure}
 
 
-\subsubsection{Intalación y configuración}
-\subsubsection{Creación de usuarios y carpetas compartidas}
+\item Después elegimos el DC01 (O el nombre que se haya elegido al cambiar el nombre en la sección anterior) como se puede ver en la Figura \ref{DC01-AD3}.
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{DC01/AD3.png}
+\end{center}
+\caption{Instalación de AD DS - DC01.}
+\label{DC01-AD3}
+\end{figure}
+
+
+\item En la sección {\it Server Roles} se elige Active Directory Domain Services (Figura \ref{DC01-AD4}), al seleccionar esta opción se desplegará un menú donde debemos especifiar las caracterísitcas, se seleciona en {\it Add Features}.
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{DC01/AD4.png}
+\end{center}
+\caption{Instalación de AD DS - Active Directory Domain Services.}
+\label{DC01-AD4}
+\end{figure}
+
+
+\item Después seguimos la instalción hasta la opción {\it Confirmation} e instalamos AD DS (Figura \ref{DC01-AD5}).
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{DC01/AD5.png}
+\end{center}
+\caption{Instalación de AD DS - Instalación.}
+\label{DC01-AD5}
+\end{figure}
+
+
+\item Cuando se termina la instlación se debe ``promocionar'' el servidor DC01 como Domain Controller, para ello seleccionamos la opción que se puede ver en la Figura \ref{DC01-AD6}.
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{DC01/AD6.png}
+\end{center}
+\caption{Instalación de AD DS - Promote to Domain Controller.}
+\label{DC01-AD6}
+\end{figure}
+
+
+\item Posteriormente, al no disponer de ningún forest previo, es necesario crear uno con el nombre {\it laboratory.com} (Figura \ref{DC01-AD7}). 
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{DC01/AD7.png}
+\end{center}
+\caption{Instalación de AD DS - Creación del forest laboratory.com.}
+\label{DC01-AD7}
+\end{figure}
+
+
+\item En la pestaña {\it Domain Controller Options} elegimos Windows Server 2016 al ser la versión más actualizada posible, después si no se dispone de un DNS externo, se elige que el Domain Controllertenga la capacidad de DNS y Global Catalog. Además, se elige la contraseña para el Directory Services Restore Mode (DSRM) (Figura \ref{DC01-AD8}).
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{DC01/AD8.png}
+\end{center}
+\caption{Instalación de AD DS - Domain Controller options.}
+\label{DC01-AD8}
+\end{figure}
+
+
+\item En la pestaña de {\it Paths} podemos ver las rutas de los principales elementos del DC como puede ser la base de datos NTDS y la carpeta SYSVOL (Figura \ref{DC01-AD9}).
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{DC01/AD9.png}
+\end{center}
+\caption{Instalación de AD DS - Rutas NTDS y SYSBOL.}
+\label{DC01-AD9}
+\end{figure}
+
+\item Por último, instalamos las opciones definidas anteriormente Figura \ref{DC01-AD10}. Después de esta opción es necesario reiniciar el servidor. 
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{DC01/AD10.png}
+\end{center}
+\caption{Instalación de AD DS - Instalación.}
+\label{DC01-AD10}
+\end{figure}
+
+\end{enumerate}
+
+\subsubsection{Enlazar cliente al dominio}
+
+Para añadir Cliente01 al dominio {\it laboratory.com} es necesario realizar los siguientes pasos: 
+
+\begin{enumerate}
+\item Del mismo modo que para cambiar el nombre al equipo, es necesario ir a {\it Control Panel - System and Security - System}, después realizar click en {\it Change settings} (Figura \ref{Cliente01-AD1}). 
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{Cliente01/AD1.png}
+\end{center}
+\caption{Enlazar cliente al dominio - Settings.}
+\label{Cliente01-AD1}
+\end{figure}
+
+\item Después se selecciona {\it change} y en la opción de {\it Member of - Domain} se elige el dominio {\it laboratory.com} (Figura \ref{Cliente01-AD2}).
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{Cliente01/AD2.png}
+\end{center}
+\caption{Enlazar cliente al dominio - Dominio.}
+\label{Cliente01-AD2}
+\end{figure}
+
+
+\item Al confirmar este cambio se requiere las credenciales del Domain Admin (Figura \ref{Cliente01-AD3}) y reiniciar el sistema.
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{Cliente01/AD3.png}
+\end{center}
+\caption{Enlazar cliente al dominio - Log on.}
+\label{Cliente01-AD3}
+\end{figure}
+
+\item Finalmente, se puede confirmar que la operación se ha realizado correctamente desde el DC01 desde la opción {\it Tools - Active Directory Users and Computers - Laboratory.com - Computers} (Figura \ref{DC01-AD12}) del Dashboard como se puede ver en la Figura \ref{DC01-AD11}. 
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{DC01/AD12.png}
+\end{center}
+\caption{Enlazar cliente al dominio - Users and Computers.}
+\label{DC01-AD12}
+\end{figure}
+
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{DC01/AD11.png}
+\end{center}
+\caption{Enlazar cliente al dominio - Dashboard.}
+\label{DC01-AD11}
+\end{figure}
+
+
+\end{enumerate}
+
+\subsubsection{Creación de usuarios}
+
+Para la fase de experimentación, además, se van a crear tres usuarios con distintos privilegios de administración en el dominio. Para ello, desde DC01 se elige la opción {\it Tools - Active Directory Users and Computers - Laboratory.com - Computers} (Figura \ref{DC01-AD12}) y después se selecciona {\it Users - New - User} como el la Figura \ref{DC01-AD13}. 
+
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{DC01/AD13.png}
+\end{center}
+\caption{Crear nuevo usuario.}
+\label{DC01-AD13}
+\end{figure}
+
+\begin{itemize}
+
+\item Usuario de dominio (Figura \ref{DC01-User1}). 
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=10cm]{DC01/User1.png}
+\end{center}
+\caption{Usario de dominio.}
+\label{DC01-User1}
+\end{figure}
+
+
+\item Usuario de dominio y administrador del dominio (Figura \ref{DC01-User1}). 
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=10cm]{DC01/User2.png}
+\end{center}
+\caption{Usuario de dominio y administrador del dominio.}
+\label{DC01-User2}
+\end{figure}
+
+Para añadirlo al grupo de administradores de dominio, seleccionamos la opción {\it Add to a group...} (Figura \ref{DC01-User3}).
+
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=10cm]{DC01/User3.png}
+\end{center}
+\caption{Añadir el usuario a un grupo.}
+\label{DC01-User3}
+\end{figure}
+
+Y se añade el grupo {\it Domain Admins} (Figura \ref{DC01-User4}).
+
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=10cm]{DC01/User4.png}
+\end{center}
+\caption{Grupo Domain Admins.}
+\label{DC01-User4}
+\end{figure}
+
+\item Usuario de dominio y administrador local en Cliente01 (Figura \ref{DC01-User5}).
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=10cm]{DC01/User5.png}
+\end{center}
+\caption{Usuario de dominio y administrador local.}
+\label{DC01-User5}
+\end{figure}
+
+Desde una consola con privilegios de administrador local en el Cliente01 ejecutamos el siguiente comando que añade al grupo de administradores el usuario creado previamente. 
+
+\begin{listing}[style=consola, numbers=none]
+# net localgroup administrators laboratory\mariarperez /add
+\end{listing}
+
+Una vez añadido, es posible loguearse con dicha información (Figura \ref{DC01-User6}).
+
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=10cm]{DC01/User6.png}
+\end{center}
+\caption{Inicio de sesión con la cuenta de usuario creada..}
+\label{DC01-User6}
+\end{figure}
+
+
+\end{itemize}
+
+
