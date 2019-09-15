@@ -1,46 +1,46 @@
 \section{Laboratorio de Active Directory}
 
-En la siguiente sección se van a establecer las directrices para la creación de un laboratorio local que permita la realización de los ataques que se describirán y expemirentación en los capítulos previos a este. La organización de este capítulo es la siguiente: En primer lugar se detallan los requisitos o prerrequisitos necesarios para poder realizar las siguientes acciones como puede ser el software de virtualización, las imágenes del sistema operativo, etc. Posteriormenente, se ha definido y configurado la topología elegida y por último la instalación y administración de Active Directory. 
+En la siguiente sección se van a establecer las directrices para la creación de un laboratorio local que permita la realización de los ataques que se describirán y ex\-pe\-ri\-men\-ta\-rán en los capítulos previos a este. La organización de este capítulo es la siguiente: en primer lugar se detallan los requisitos o prerrequisitos necesarios para poder realizar las siguientes acciones como puede ser el software de virtualización, las imágenes del sistema operativo, etc. Posteriormente, se ha definido y configurado la topología elegida y por último la instalación y administración de Active Directory. 
 
 \subsection{Requisitos}
 
-Previamente a la creación de la topología de red y a la instalción de  Active Directory que permita realizar las pruebas es necesario disponer de las siguientes características.
+Previamente a la creación de la topología de red y a la instalción de Active Directory que permita realizar las pruebas es necesario disponer de las siguientes características.
 
 \subsubsection{Software de virtualización}
 
-La virtualización consiste en la creación de entornos simulados o recursos desde un único sistema operativo denominado {\it host}, por consecuencia, un software de virtualización es aquel que te permite realizar las acciones descritas anteriormente que puede ser la creación de sistemas operativos, creación de topologías de red, administración de recursos etc. Aunque hay gran variadad de sotfware de virtualización, para la realización de este proyecto se ha utilizado {\it Oracle VM VirtualBox}~\cite{Capitulo4:VirtualBox}.\\
+La virtualización consiste en la creación de entornos simulados o recursos desde un único sistema operativo denominado {\it host}, por consecuencia, un software de virtualización es aquel que te permite realizar las acciones descritas anteriormente que puede ser la creación de sistemas operativos, creación de topologías de red, administración de recursos, etc. Aunque hay gran variedad de software de virtualización, para la realización de este proyecto se ha utilizado {\it Oracle VM VirtualBox}~\cite{Capitulo4:VirtualBox}.\\
 
-{\it VirtualBox} es un software de virtualización {\it Open Source} con licencia GPLv2 desarrollado por Oracle Corporation que permite la creación de entornos x86 and AMD64/Intel64. Para este proyecto se ha utilizado la última versión (VirtualBox 6.0.12) que se puede desacargar en \footnote{https://www.virtualbox.org/}. Con este Software se van a crear las máquinas virtuales y las redes internas necesarias para la creación del laboratorio. 
+{\it VirtualBox} es un software de virtualización {\it Open Source} con licencia GPLv2 desarrollado por Oracle Corporation que permite la creación de entornos x86 and AMD64/Intel64. Para este proyecto se ha utilizado la última versión (VirtualBox 6.0.12) que se puede descargar en \footnote{https://www.virtualbox.org/}. Con este software se van a crear las máquinas virtuales y las redes internas necesarias para la creación del laboratorio. 
 
 \subsubsection{Máquinas Virtuales}
 
-Para este proyecto se van a utilizar cuatro máquinas virtuales. Para aquellas que se necesite una licencia de software privativo se va a utilizar la versión de prueba que proporciona Microsoft con el objetivo de que cualquier pueda replicar dicho laboratorio sin necesidad de lincencias adicionales. Las máquinas son las siguientes:
+Para este proyecto se van a utilizar cuatro máquinas virtuales. Para aquellas que se necesite una licencia de software privativo se va a utilizar la versión de prueba que proporciona Microsoft con el objetivo de que cualquiera pueda replicar dicho laboratorio sin necesidad de lincencias adicionales. Las máquinas son las siguientes:
 
 \begin{itemize}
-\item \textbf{DC01}: El la máquina virtual principal y es la encargada de administrar el Active Directory. Como se ha comentado en el estado del arte se va a utilizar Windows Server 2019 es su última versión. La imagen del sistema operativo se ha descargado de \footnote{https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2019}.
+\item \textbf{DC01}: Es la máquina virtual principal y es la encargada de administrar el Active Directory. Como se ha comentado en el estado del arte se va a utilizar Windows Server 2019 es su última versión. La imagen del sistema operativo se ha descargado de \footnote{https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2019}.
 
 \item \textbf{Cliente01}: Por otro lado, esta máquina representa a la de un usuario legítimo o cliente de una empresa que está unido al dominio y conectado por la red interna. Para esta máquina virtual se ha utilizado Windows 10 Enterprise que se puede descargar en \footnote{https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2019}. 
 
 \item \textbf{Gateway}: Esta máquina virtual se va a utilizar como puerta de enlace entre la red interna y la red externa lo que simula ser internet. Para su implementación, se ha utilizado Debian 10 (Buster) sin escritorio para ahorrar recursos locales. La imagen de este sistema operativo se puede descargar en \footnote{https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-10.1.0-amd64-netinst.iso}.
 
-\item \textbf{Atacante01}: Por último, para la simulación de un atacante externo o profesional de la seguirdad ofensiva realizando labores de {\it Red Team}, se ha utilizado la distribución Kali Linux 2019.3, este distribución ofrece gran variedad de herramientas destinadas a la auditoría informática que serán de utilidad a la hora de realizar los ataques propuestos. Para descargar esta distribución se puede a través de \footnote{https://cdimage.kali.org/kali-2019.3/kali-linux-2019.3-amd64.iso}.
+\item \textbf{Atacante01}: Por último, para la simulación de un atacante externo o profesional de la seguridad ofensiva realizando labores de {\it Red Team}, se ha utilizado la distribución Kali Linux 2019.3. Esta distribución ofrece gran variedad de herramientas destinadas a la auditoría informática que serán de utilidad a la hora de realizar los ataques propuestos. Para descargar esta distribución se puede a través de \footnote{https://cdimage.kali.org/kali-2019.3/kali-linux-2019.3-amd64.iso}.
 
 \end{itemize}
 
 
 \subsubsection{Instalación y actualización}
 
-La instalación y actualización de las máquinas, no se ha considerado como alcance de este proyecto, por lo tantoa partir de este punto se da por hecho de que el usuario ha instalado y actualizado las máquinas y cuenta con la última versión de las mismas. 
+La instalación y actualización de las máquinas, no se ha considerado como alcance de este proyecto, por lo tanto, a partir de este punto se da por hecho que el usuario ha instalado y actualizado las máquinas y cuenta con la última versión de las mismas. 
 
 \subsection{Configuración previa}
 
-Antes de configurar el active directory, se ha creado una topología en red simula a un entorno coorporativo fictio. Aunque este laboratorio únicamente disponga de una máquina unida al dominio, en entornos reales son multitud los equipos lo que posibilita un gran abanico de posibles entradas a la red de la empresa u organización. A contanuación se va a explicar la topología elegida y las configuraciones necesarias.. 
+Antes de configurar el Active Directory, se ha creado una topología en red que simula a un entorno coorporativo fictio. Aunque este laboratorio únicamente disponga de una máquina unida al dominio, en entornos reales son multitud los equipos unidos al dominio, lo que posibilita un gran abanico de posibles entradas a la red de la empresa u organización. A continuación se va a explicar la topología elegida y las configuraciones necesarias.
 
 \subsubsection{Topología de red}
 
-Como ya se ha adalentado, la máquina consta de 4 máquinas: 2 Windows (DC01 y Cliente01) y 2 Linux (Atacante01 y Gateway). La distribución de la topología en red se puede observar en la Figura \ref{Topología}. En la imagen se puede apreciar la existencia de dos redes: ADNET(192.168.0.0/24) formada por los dos dos Sistemas Windows que forman parte del dominio de la empresa fictia y EXTNET(10.10.10.0) que emula en una red interna lo que sería estar expuesto a internet en un entorno real. Ambas redes están enlazadas por el Gateway. 
+Como ya se ha adelantado, la máquina consta de 4 máquinas: 2 Windows (DC01 y Cliente01) y 2 Linux (Atacante01 y Gateway). La distribución de la topología en red se puede observar en la Figura \ref{Topología}. En la imagen se puede apreciar la existencia de dos redes: ADNET(192.168.0.0/24) formada por los dos dos Sistemas Windows que forman parte del dominio de la empresa fictia y EXTNET(10.10.10.0) que emula en una red interna lo que sería estar expuesto a internet en un entorno real. Ambas redes están enlazadas por el Gateway. 
 
-\begin{figure}[t!] %[ht!] para here [b] para bottom [t] para top
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=16cm]{Topologia.png}
 \end{center}
@@ -86,8 +86,8 @@ Se va a realizar la configuración necesaria para cada red.
 
 \item \textbf{Cliente01}:
 \begin{enumerate}
-\item Para configurar la red en el Cliente01, al ser una Máquina Windows en la misma red que el DC01, es necesario repetir los mismos pasos que en la configuración anterior.
-\item En el último paso, las direcciones IP son las siguientes: IP(192.168.04) y Gateway(192.168.0.2). En este caso la dirección DNS corresponde a la dirección IP del DC01: 192.168.0.3. La configuración resultante se puede ver en la Figura \ref{Cliente01-Red1}.
+\item Para configurar la red en el Cliente01, al ser una máquina Windows en la misma red que el DC01, es necesario repetir los mismos pasos que en la configuración anterior.
+\item En el último paso, las direcciones IP son las siguientes: IP(192.168.0.4) y Gateway(192.168.0.2). En este caso la dirección DNS corresponde a la di\-re\-cción IP del DC01: 192.168.0.3. La configuración resultante se puede ver en la Figura \ref{Cliente01-Red1}.
 
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
@@ -112,7 +112,7 @@ Se va a realizar la configuración necesaria para cada red.
 
 \item Iniciamos la máquina y comprobamos que se han creado ambas interfaces {\it enp0s3} para la ADNET y {\it enp0s8} para la EXTNET. 
 
-\item A continuación introducimos los siguientes comandos, estos comandos levantan ambas interfaces y asignan las direcciones IP correspondientes. 
+\item A continuación introducimos los siguientes comandos. Estos comandos levantan ambas interfaces y asignan las direcciones IP correspondientes. 
 \begin{listing}[style=consola, numbers=none]
 # ip link set enp0s3 up
 # ip a add 192.168.0.2/24 dev enp0s3
@@ -120,7 +120,7 @@ Se va a realizar la configuración necesaria para cada red.
 # ip a add 10.10.10.2/24 dev enp0s8
 \end{listing}
 
-\item Por último, permitimos que el gateway reenvíe los paquetes que le llegan, para eso se utiliza el siguiente comando: 
+\item Por último, permitimos que el gateway reenvíe los paquetes que le llegan. Para eso se utiliza el siguiente comando: 
 \begin{listing}[style=consola, numbers=none]
 # echo 1 > /proc/sys/net/ipv4/ip_forward
 \end{listing}
@@ -148,13 +148,13 @@ Se va a realizar la configuración necesaria para cada red.
 \label{Atacante01-Red1}
 \end{figure}
 
-\item De la misma manera que en el gateway configuramos la interfaz de red, que en este caso es {\it eth0} con los siguientes comandos. 
+\item De la misma manera que en el gateway, configuramos la interfaz de red, que en este caso es {\it eth0} con los siguientes comandos. 
 \begin{listing}[style=consola, numbers=none]
 # ip link set eth0 up
 # ip a add 10.10.10.3 dev eth0 
 \end{listing}
 
-\item Para poder alcazar la red interna, es necesario definir a la dirección 10.10.10.2 como fateway, para que cuando la máquina no encuentre una dirección IP la redirija por ese Gateway. Para ello, se utiliza el siguiente comando: 
+\item Para poder alcazar la red interna, es necesario definir a la dirección 10.10.10.2 como gateway, para que cuando la máquina no encuentre una dirección IP la redirija por ese Gateway. Para ello, se utiliza el siguiente comando: 
 
 \begin{listing}[style=consola, numbers=none]
 # ip route default via 10.10.10.2
@@ -176,7 +176,7 @@ Se va a realizar la configuración necesaria para cada red.
 \label{Cliente01-Red2}
 \end{figure}
 
-\item \textbf{Atacante01 - DC01}: Para comprobar la conectividad dentre Atacante01 y DC10, en vez de realizar un ping intentamos conectarnos a través de Samba (\ref{Atacante01-Red2})
+\item \textbf{Atacante01 - DC01}: Para comprobar la conectividad entre Atacante01 y DC10, en vez de realizar un ping intentamos conectarnos a través de Samba (\ref{Atacante01-Red2})
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=10cm]{Atacante01/Red2.png}
@@ -192,7 +192,7 @@ Se va a realizar la configuración necesaria para cada red.
 Una buena práctica es cambiar el nombre a los Sistemas Windows, esto nos facilitará su identificación y su futura administración. 
 
 \begin{itemize}
-\item Para cambiar el nombre a DC01, se puede realizar desde el propio panel de administración del servidor, a través de la opción {\it Local Name Server - Computer Name - Change} como se puede ver en la Figura \ref{DC01-Name1}
+\item Para cambiar el nombre a DC01, se puede realizar desde el propio panel de ad\-mi\-nis\-tra\-ción del servidor, a través de la opción {\it Local Name Server - Computer Name - Change} como se puede ver en la Figura \ref{DC01-Name1}
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{DC01/Name1.png}
@@ -201,10 +201,10 @@ Una buena práctica es cambiar el nombre a los Sistemas Windows, esto nos facili
 \label{DC01-Name1}
 \end{figure}
 
-\item Para cambiar el nombre a Cliente01, se realiza a través de {\it Control Panel - System and Security - System} posteriormente se elige la opción {\it Change Settings - Change} y se introduce el nombre Cliente01 (\ref{Cliente01-Name1}). Ambos cambios nos van a pedir un reinicio del equipo.  
+\item Para cambiar el nombre a Cliente01, se realiza a través de {\it Control Panel - System and Security - System}. Posteriormente, se elige la opción {\it Change Settings - Change} y se introduce el nombre Cliente01 (\ref{Cliente01-Name1}). Ambos cambios nos van a pedir un reinicio del equipo. 
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
-\includegraphics[width=15cm]{Cliente01/Name1.png}
+\includegraphics[width=13cm]{Cliente01/Name1.png}
 \end{center}
 \caption{Cambio de nombre Cliente01}
 \label{Cliente01-Name1}
@@ -230,17 +230,17 @@ En esta sección se va a detallar la instalación y configuración de Active Dir
 \end{figure}
 
 
-\item Para el tipo de instalación se va a elegir {\it Roled-based or feature-based installation} (Figura \ref{DC01-AD2}).
+\item Para el tipo de instalación se va a elegir {\it Role-based or feature-based installation} (Figura \ref{DC01-AD2}).
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{DC01/AD2.png}
 \end{center}
-\caption{Instalación de AD DS - Roled-based installation.}
+\caption{Instalación de AD DS - Role-based installation.}
 \label{DC01-AD2}
 \end{figure}
 
 
-\item Después elegimos el DC01 (O el nombre que se haya elegido al cambiar el nombre en la sección anterior) como se puede ver en la Figura \ref{DC01-AD3}.
+\item Después elegimos el DC01 (o el nombre que se haya elegido al cambiar el nombre en la sección anterior) como se puede ver en la Figura \ref{DC01-AD3}.
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{DC01/AD3.png}
@@ -270,7 +270,7 @@ En esta sección se va a detallar la instalación y configuración de Active Dir
 \end{figure}
 
 
-\item Cuando se termina la instlación se debe ``promocionar'' el servidor DC01 como Domain Controller, para ello seleccionamos la opción que se puede ver en la Figura \ref{DC01-AD6}.
+\item Cuando se termina la instalación se debe ``promocionar'' el servidor DC01 como Domain Controller, para ello seleccionamos la opción que se puede ver en la Figura \ref{DC01-AD6}.
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{DC01/AD6.png}
@@ -290,7 +290,7 @@ En esta sección se va a detallar la instalación y configuración de Active Dir
 \end{figure}
 
 
-\item En la pestaña {\it Domain Controller Options} elegimos Windows Server 2016 al ser la versión más actualizada posible, después si no se dispone de un DNS externo, se elige que el Domain Controllertenga la capacidad de DNS y Global Catalog. Además, se elige la contraseña para el Directory Services Restore Mode (DSRM) (Figura \ref{DC01-AD8}).
+\item En la pestaña {\it Domain Controller Options} elegimos Windows Server 2016 al ser la versión más actualizada posible, después si no se dispone de un DNS externo, se elige que el Domain Controller tenga la capacidad de DNS y Global Catalog. Además, se elige la contraseña para el Directory Services Restore Mode (DSRM) (Figura \ref{DC01-AD8}).
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
 \includegraphics[width=15cm]{DC01/AD8.png}
@@ -347,7 +347,7 @@ Para añadir Cliente01 al dominio {\it laboratory.com} es necesario realizar los
 \item Al confirmar este cambio se requiere las credenciales del Domain Admin (Figura \ref{Cliente01-AD3}) y reiniciar el sistema.
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
-\includegraphics[width=15cm]{Cliente01/AD3.png}
+\includegraphics[width=10cm]{Cliente01/AD3.png}
 \end{center}
 \caption{Enlazar cliente al dominio - Log on.}
 \label{Cliente01-AD3}
@@ -375,7 +375,7 @@ Para añadir Cliente01 al dominio {\it laboratory.com} es necesario realizar los
 
 \subsubsection{Creación de usuarios}
 
-Para la fase de experimentación, además, se van a crear tres usuarios con distintos privilegios de administración en el dominio. Para ello, desde DC01 se elige la opción {\it Tools - Active Directory Users and Computers - Laboratory.com - Computers} (Figura \ref{DC01-AD12}) y después se selecciona {\it Users - New - User} como el la Figura \ref{DC01-AD13}. 
+Para la fase de experimentación, además, se van a crear tres usuarios con distintos privilegios de administración en el dominio. Para ello, desde DC01 se elige la opción {\it Tools - Active Directory Users and Computers - Laboratory.com - Computers} (Figura \ref{DC01-AD12}) y después se selecciona {\it Users - New - User} como en la Figura \ref{DC01-AD13}. 
 
 \begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
 \begin{center}
@@ -435,7 +435,7 @@ Y se añade el grupo {\it Domain Admins} (Figura \ref{DC01-User4}).
 \label{DC01-User5}
 \end{figure}
 
-Desde una consola con privilegios de administrador local en el Cliente01 ejecutamos el siguiente comando que añade al grupo de administradores el usuario creado previamente. 
+Desde una consola con privilegios de administrador local en el Cliente01, ejecutamos el siguiente comando que añade al grupo de administradores el usuario creado previamente. 
 
 \begin{listing}[style=consola, numbers=none]
 # net localgroup administrators laboratory\mariarperez /add
@@ -447,7 +447,7 @@ Una vez añadido, es posible loguearse con dicha información (Figura \ref{DC01-
 \begin{center}
 \includegraphics[width=10cm]{DC01/User6.png}
 \end{center}
-\caption{Inicio de sesión con la cuenta de usuario creada..}
+\caption{Inicio de sesión con la cuenta de usuario creada.}
 \label{DC01-User6}
 \end{figure}
 

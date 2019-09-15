@@ -1,15 +1,15 @@
-Directotio Activo del inglés {\it Active Directory (AD)}, corresponde a la implementación de un servicio de directorio proporcionado por Microsoft. La finalidad principal de este servicio es la gestión y administración centralizada de los recursos y los usuarios pertenecientes a una red de una empresa u organización. La in\-for\-ma\-ción admisitrada por Active Directory se puede agrupar en tres grupos princiaples: recursos (impresoras), servicios (aplicaciones web, aplicaciones de correo electróncio, bases de datos, etc.) y usuarios (cuentas, credenciales, grupos, etc.). Con esta in\-for\-ma\-ción, es posible crear y adminsitrar dominios, usuarios y todos los objetos englobados dentro de la misma red. En este capítulo se va a introducir los términos generales y conceptos clave y la creación de un laboratorio local que permita la ejecución de los principales ataques sobre Active Directory.
+Directorio Activo del inglés {\it Active Directory (AD)}, corresponde a la implementación de un servicio de directorio proporcionado por Microsoft. La finalidad principal de este servicio es la gestión y administración centralizada de los recursos y los usuarios pertenecientes a una red de una empresa u organización. La in\-for\-ma\-ción administrada por Active Directory se puede agrupar en tres grupos principales: recursos (impresoras, fax, etc.), servicios (aplicaciones web, aplicaciones de correo electrónico, bases de datos, etc.) y usuarios (cuentas, credenciales, grupos, etc.). Con esta in\-for\-ma\-ción, es posible crear y adminsitrar dominios, usuarios y todos los objetos englobados dentro de la misma red. En este capítulo se va a introducir los términos generales y conceptos clave y la creación de un laboratorio local que permita la ejecución de los principales ataques sobre Active Directory.
+
 
 \section{Protocolos y servicios implicados en Active Directory}
 
 \subsubsection{Domain Name System (DNS)}
 
-{\it Domain Name System (DNS)} es el sevicio que proporciona la resolución de nombres de dominio, es decir, resuleve la dirección IP de cada nombre de dominio utilizado en un entorno Active Directory. Este servicio es de gran importancia ya que Active Directory se basa en la resolución de nombres para establecer qué recursos están disponibles a lo largo de una red y dónde se encuentran. 
-
+{\it Domain Name System (DNS)} es el servicio que proporciona la resolución de nombres de dominio, es decir, resuelve la dirección IP de cada nombre de dominio utilizado en un entorno Active Directory. Este servicio es de gran importancia ya que Active Directory se basa en la resolución de nombres para establecer qué recursos están disponibles a lo largo de una red y dónde se encuentran. 
 
 \subsubsection{Lightweight Directory Access Protocol (LDAP)}
 
-{Lightweight Directory Access Protocol (LDAP)} es un procolo que sirve para acceder a los servicios de directorio. Es utilizado por Active Directory como mecanismo de comunicación entre apliciones y equipos con los servicios que dispone el directorio. Además realiza un seguimiento de los objetos existentes en una red. 
+{Lightweight Directory Access Protocol (LDAP)} es un procolo que sirve para acceder a los servicios de directorio. Es utilizado por Active Directory como mecanismo de comunicación entre aplicaciones y equipos con los servicios que dispone el directorio. Además realiza un seguimiento de los objetos existentes en una red. 
 
 
 \subsubsection{Server Message Block (SMB)}
@@ -22,15 +22,15 @@ Directotio Activo del inglés {\it Active Directory (AD)}, corresponde a la impl
 
 \subsubsection{Active Directory Domain Services (ADDS)}
 
-{\it Active Directory Domain Services (ADDS)} es el servicio de Active Directory cuando este es intalado en un servidor como por ejemplo Windows Server 2016 ó Windows Server 2019.
+{\it Active Directory Domain Services (ADDS)} es el servicio de Active Directory cuando este es instalado en un servidor como por ejemplo Windows Server 2016 ó Windows Server 2019.
 
 \subsubsection{Dominio (Domain)}
 
 Un dominio, del inglés {\it Domain}~\cite{Capitulo4:Domain} es definido como un ``contenedor lógico'', es decir, es una estructura lógica que contiene los siguientes componentes:
 
 \begin{itemize}
-\item Una estructura jerárquica para usauarios y grupos en función de los privilegios de los mismos.
-\item Servicios (vistos anteriormente) que proveen capacidades de autenticación y autorización.
+\item Una estructura jerárquica para usuarios y grupos en función de los privilegios de los mismos.
+\item Servicios (vistos anteriormente) que proveen capacidades de autenticación y au\-to\-ri\-za\-ción.
 \item Distintas políticas de seguridad que se aplican a usuarios y objetos.
 \item Un registro DNS que identifica inequívocamente el dominio, como puede ser empresa.com, ad.empresa.com. Este nombre será requisito para iniciar sesión en una cuenta de dominio utilizándose como parte del nombre del usuario. 
 \end{itemize}
@@ -39,10 +39,10 @@ Estos componentes y objetos están almacenados en la base de datos de Active Dir
 
 \subsubsection{Árbol (Domain Tree)}
 
-En relación con el término anterior, un árbol del inglés {Domain Tree}, son colecciones de dominios que se agrupan como una estructura jerárquica. Un arbol se le puede considerar como una serie de dominios conectados jerárquicamente a través de usar el mismo espacio de nombres DNS. Un ejemplo sería, si al dominio anterior: empresa.com le añadimos un ``hijo'' denominado recursoshumanos.empresa.com se crea un árbol de dominios compuesto por un dominio padre o root (empresa.com) y un hijo o child (recursoshumanos.empresa.com). Estos dominios forman parte del mismo árbol y se crean automáticamente relaciones de confianza entre ellos. En un Active Directory pueden coexisstir multitud de árboles de dominio diferentes. 
+En relación con el término anterior, un árbol del inglés {Domain Tree}, son colecciones de dominios que se agrupan como una estructura jerárquica. Un árbol se le puede considerar como una serie de dominios conectados jerárquicamente a través de usar el mismo espacio de nombres DNS. Un ejemplo sería, si al dominio anterior: empresa.com le añadimos un ``hijo'' denominado recursoshumanos.empresa.com se crea un árbol de dominios compuesto por un dominio padre o root (empresa.com) y un hijo o child (recursoshumanos.empresa.com). Estos dominios forman parte del mismo árbol y se crean automáticamente relaciones de confianza entre ellos. En un Active Directory pueden coexisstir multitud de árboles de dominio diferentes. 
 
 \subsubsection{Bosque (Forest)}
-Un bosque, del inglés {\it Forest}, a grandes rasgos es una colección de árboles de dominio que comparten el mismo {\it schema}, misma estructura lógica, {\it global catalog} y configuración. Alguno de estos términos será introducido a continuación. Todos los dominios pertenecientes a un mismo forest, establecen una relación de confianza transitiva. Cabe destacar, que cuando se crea una instacia de Active Directory por primera vez y se crea un dominio también se está creando implícitamente un forest. 
+Un bosque, del inglés {\it Forest}, a grandes rasgos es una colección de árboles de dominio que comparten el mismo {\it schema}, misma estructura lógica, {\it global catalog} y configuración. Alguno de estos términos será introducido a continuación. Todos los dominios pertenecientes a un mismo forest, establecen una relación de confianza transitiva. Cabe destacar, que cuando se crea una instacia de Active Directory por primera vez y se crea un dominio, también se está creando implícitamente un forest. 
 
 \subsubsection{Schema}
 
@@ -54,11 +54,11 @@ Fully Qualified Domain Name (FQDN) es la dirección completa que identifica un h
 
 \subsubsection{Domain Controller (DC)}
 
-Un controlador de dominio, del inglés {\it Domain Controller (DC)}, es la parte fundamental de Active Directory, corresponde a servidores de Windows que contienen la base de datos Active Directory y por lo tanto almacenan toda la información correcpondiente a dominios, domain trees, forests, usuarios, servicieos, etc. 
+Un controlador de dominio, del inglés {\it Domain Controller (DC)}, es la parte fundamental de Active Directory, corresponde a servidores de Windows que contienen la base de datos Active Directory y por lo tanto almacenan toda la información correcpondiente a dominios, domain trees, forests, usuarios, servicios, etc. 
 
 \subsubsection{Objetos (Objects)}
 
-Todos los elementos alamacenados en una base de datos Active Directory se almacenan en forma de objetos, cada objeto tiene un tipo diferente que le diferencia de otros objetos. Cada objeto almacenado tiene un SID diferente que se utiliza para admitir o denegar el acceso del objeto a un recurso del dominio. Los objetos creados por defecto en cualqueir dominio se pueden agrupar de la siguiente forma: 
+Todos los elementos almacenados en una base de datos Active Directory se almacenan en forma de objetos, cada objeto tiene un tipo diferente que le diferencia de otros objetos. Cada objeto almacenado tiene un SID diferente que se utiliza para admitir o denegar el acceso del objeto a un recurso del dominio. Los objetos creados por defecto en cualquier dominio se pueden agrupar de la siguiente forma: 
 
 \begin{itemize}
 \item Unidades organizativas, del inglés {\it Organizational Unit (OU)}. 
@@ -72,7 +72,7 @@ Todos los elementos alamacenados en una base de datos Active Directory se almace
 
 \subsubsection{Organizational Unit (OU)}
 
-Unidades organizativas, del inglés {\it Organizational Unit (OU)} son contenedores de diferentes objetos del mismo dominio como puede ser otros contenedores, cuentas de usuario, grupos, etc. Un administrador del dominio puede crear unidades organizativas y aplicarle diferentes directivas de grupo que se aplicarán a todos los objetos de esta unidad, esto permite una administración más eficiente del Active Directory. 
+Unidades organizativas, del inglés {\it Organizational Unit (OU)} son contenedores de diferentes objetos del mismo dominio como pueden ser otros contenedores, cuentas de usuario, grupos, etc. Un administrador del dominio puede crear unidades organizativas y aplicarle diferentes directivas de grupo que se aplicarán a todos los objetos de esta unidad, lo que permite una administración más eficiente del Active Directory. 
 
 \subsubsection{Service Principal Name (SPN)}
 
