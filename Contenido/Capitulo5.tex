@@ -222,7 +222,7 @@ La técnica {\it Overpass the hash}, también conocida como {\it Pass the key (P
 \begin{center}
 \includegraphics[width=15cm]{OTH/OTH4.png}
 \end{center}
-\caption{Hash del usuario víctima.}
+\caption{Hash del uusario víctima.}
 \label{OTH4}
 \end{figure}
 
@@ -231,7 +231,7 @@ La técnica {\it Overpass the hash}, también conocida como {\it Pass the key (P
 \begin{center}
 \includegraphics[width=15cm]{OTH/OTH5.png}
 \end{center}
-\caption{Pash the hash a través de la herramienta Mimikatz.}
+\caption{Comando para realizar el ataque overpass the hash.}
 \label{OTH5}
 \end{figure}
 
@@ -256,11 +256,207 @@ La técnica {\it Overpass the hash}, también conocida como {\it Pass the key (P
 
 \end{enumerate}
 
-
-
-
 \section{Pass The Ticket}
 
-\section{Golden/Silver Ticket}
+El ataque {\it Pass the ticket}~\cite{Capitulo5:ptt} consiste en la obtenión de un Ticket TGS válido de un usuario y la utilización de este para acceder a servicios o recursos donde el usuario tenga acceso. Esta técnica de movimiento lateral y/o movimiento vertical utiliza para la autenticación de un usario legítimo un ticket válido encontrados en el sistema. Una característica de este ataque es que no es necesario ser administrador local para importar los tickets de Kerberos.  
 
-asection{Kerberoast}
+\subsubsection{Experimentación}
+
+Para la ejecutación del ataque {\it Pass the ticket} es necesario que el usuario con privilegios al que queremos suplantar haya solicitado un Ticket TGS en la máquina en la que disponemos conexión activa. A continuación, se detallará el proceso realizado. 
+
+\begin{enumerate}
+
+\item Como se puede obserbar en la Figura \ref{PTT1}, al igual que en los ataques anteriores, disponemos de una sesión activa a través de una {\it Reverse Shell} interactiva del usuario administrador local {\it mariarperez}. Además, con el comando {\it klist} se puede listar los tickets tanto TGT como TGS que dispone dicho usuario, en este caso no dispone de ninguno.
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{PTT/PTT1.png}
+\end{center}
+\caption{Tickets del usuario mariarperez.}
+\label{PTT1}
+\end{figure}
+
+\item A través de la herramienta Mimikatz, y ejecundo el siguiente comando, obtenemos todos los tickets válidos disponibles en el sistema (Figura \ref{PTT2}). Este comando creará un fichero {\it *.kirbi} por cada ticket que haya encontrado. 
+\begin{listing}[style=consola, numbers=none]
+# sekurlsa::tickets /export
+\end{listing}
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{PTT/PTT2.png}
+\end{center}
+\caption{Extración de tickets a través de Mimikatz.}
+\label{PTT2}
+\end{figure}
+
+\item Si listamos todos los tickets que ha logrado obtener el comando anterior (Figura \ref{PTT3}) podemos observar que existen tickets cuyo usuario es federicogar, domain admin de Active Directory. 
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{PTT/PTT3.png}
+\end{center}
+\caption{Lista de tickets obtenidos.}
+\label{PTT3}
+\end{figure}
+
+\item Una vez elegido el ticket, utilizamos de nuevo la herramienta Mimikatz para realizar el ataque de {\it Pass the ticket} a través del comando que se puede ver en la Figura \ref{PTT4}. Para comprobar que el ataque se ha creado correctamente volvemos a listar los tickets para el usuario {\it mariarperez} y vemos que tenemos un ticket TGT cuyo cliente es {\it federicogar}.
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{PTT/PTT4.png}
+\end{center}
+\caption{Ataque pass the ticket.}
+\label{PTT4}
+\end{figure}
+
+\item Con el ticket TGT válido, ya se puede obtener un ticket TGS que permita acceder a los recursos del usuario suplantado (Figura \ref{PTT5}).
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{PTT/PTT5.png}
+\end{center}
+\caption{Comprobación del ataque pass the ticket.}
+\label{PTT5}
+\end{figure}
+
+\end{enumerate}
+
+\section{Golden Ticket}
+
+La técnica {\it Golden Ticket}~\cite{Capitulo5:Kerberos} no es un ataque como tal, es una técnica de persistencia que consiste en generar un ticket TGT cuya caducidad puede ser definida por el atacante, para ello, es necesario disponer del hash de la cuenta de usuario {\it krbtgt} para poder cifrar el ticket correctamente. Esta técnica es una de las técnicas más importantes ya que al disponer del hash de la cuenta {\it krbtgt} es posible suplantar todas las cuentas del Active Directory y otorga al atacante acceso a todos los recursos del dominio además de ser una técnica prácticamente indetectable ~\cite{Capitulo5:Golden}.
+
+\subsubsection{Experimentación}
+
+Antes de realizar este ataque, como requisito fundamental es necesario obtener el Hash NT o culaquier hash de la cuenta {\it krbtgt}, por lo tanto, es una técnica de post-explotación y persistencia ya que es necesario haber comprometido el Active Directory y disponer de una cuenta {\it Domain Admin}. \\
+
+Para obtener la información de la cuenta {\it krbtgt}, desde el Domain Controller y de nuevo con la herramienta Mimikatz utilizamos el siguiente comando:
+\begin{listing}[style=consola, numbers=none]
+# lsadump::lsa /inject /name:krbtgt
+\end{listing}
+
+Y obtenemos la información de la Figura \ref{GT1}, donde se incluye el Hash NT, el Hash aes256\_hmac y el Hash aes128\_hmac entre otra información. 
+
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{GT/GT1.png}
+\end{center}
+\caption{Obtención de la información de la cuenta krbtgt.}
+\label{GT1}
+\end{figure}
+
+
+\begin{enumerate}
+
+\item Una vez obetenido el Hash de la cuenta {\it krbtgt}, desde una cuenta sin privilegios ni tickets asociados (Figura \ref{GT2}) se puede crear un {\it Golden Ticket}. 
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{GT/GT2.png}
+\end{center}
+\caption{Cuenta desde la que se va a realizar el ataque.}
+\label{GT2}
+\end{figure}
+
+\item Para crear un {\it Golden Ticket}, se puede realizar a través de la herramienta Mimikatz. Como se puede ver el Figura \ref{GT3} se ha creado el ticket para el usuario {\it Administrator} cuyo SID corresponde con el del dominio y ha sido obtenido previamente con el comando {\it whoami /user} eliminando la parte correspondiente al ID, aunque llegados a este punto es posible suplantar cualquier cuenta de dominio. Un aspecto a tener en cuenta es la duración de los tickets TGT, por defecto los tickets creados legítimamente tienen una duración de 10 horas a partir del momento e su creación. Cuando se crea un {\it Golden Ticket} la duración por defecto es de 10 años. Este dato puede hacer saltar los antivirus o incluso que el ticket sea invalidado, para ello es conveniente indicar la duración del ticket a través de la opción {\it /endin:600}. 
+
+\begin{listing}[style=consola, numbers=none]
+# kerberos::golden /domain:[Dominio] /sid:[SID del dominio] /[rc4/aes128/aes256]:[Hash krbtgt] /user:[Usuario a suplantar] /ptt /id:[ID] /groups:[Lista de grupos a los que va a pertenecer el usuario] /endin:600
+\end{listing}
+
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{GT/GT3.png}
+\end{center}
+\caption{Creación de un golden ticket.}
+\label{GT3}
+\end{figure}
+
+\item Por último, comprobamos que el {\it Golden Ticket} se ha creado correctamente (Figura \ref{GT4}) y que tenemos acceso al los ficheros del Domain Controller.
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{GT/GT4.png}
+\end{center}
+\caption{Golden ticket creado correctamente.}
+\label{GT4}
+\end{figure}
+
+\end{enumerate}
+
+\section{Kerberoast}
+
+La último técnica contra Active Directory es el ataque {\it Kerberoast}. La idea principal de este ataque es obtener tickets TGS y crackearlos de manera local para obtener la contraseña del servicio o usuario en cuestión. Este es uno de los ataques más utilizados ya que no es necesario una interación completa con el sistema. El atacante puede pedir un ticket TGS de manera legítima, sin realizar ningún tipo de ataque o usando algún tipo de herrramienta de auditoría y crackearlo de manera local en una máquina ajena al dominio. Este ataque aprovecha que los tickets de servicio o tickets TGS están cifrados con el Hash NT de la cuenta del servicio y tiene más probabilidades de que la contraseña sea débil o fácil de obtenerla. Esta técnica utiliza los Service Principal Name (SPN)~\cite{Capitulo4:SPN} definidos en la sección anterior. 
+
+\subsubsection{Experimentación}
+
+Para poder llevar acabo en el laboratorio, es necesario añadir a un usuario el atributo SPN, para ello realizamos los siguientes pasos:
+
+\begin{enumerate}
+
+\item Desde el Domain Controller, en la opción de {\it Active Directory Users and Computers} en la pestaña {\it View} añadimos la opcíon de {\it Advanced Features} (Figura \ref{Kerberoast1}). Esto permite que se pueda editar los atributos de un usuario. 
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{Kerberoast/Kerberoast1.png}
+\end{center}
+\caption{Advanced features.}
+\label{Kerberoast1}
+\end{figure}
+
+\item Elegimos el usuario y vemos las propiedades de este. En la pestaña {\it Attribute Editor} se busca el atributo {\it servicePrincipalName} y se añade el valor que se quiera, en este caso, se ha añadido {\it kerberoast\textbackslash{}testing} como se puede apreciar en la Figura \ref{Kerberoast2}.
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{Kerberoast/Kerberoast2.png}
+\end{center}
+\caption{Añadir el atributo SPN al usuario.}
+\label{Kerberoast2}
+\end{figure}
+
+\end{enumerate}
+
+Después de realizar este cambio, ya se puede realizar el ataque Kerberoast~\cite{Capitulo5:Kerberoast} en el laboratorio creado: 
+
+\begin{enumerate}
+\item En primer lugar, a través de la herramienta propocionada por Microsoft {\it Setspn} listamos todos los SPN disponibles en el dominio. Como se puede ver en la Figura \ref{Kerberoast3} aparece el SPN creado anteriormente. El comando ejecutado es el siguiente: 
+
+\begin{listing}[style=consola, numbers=none]
+# Setspn -T [Dominio] -Q */*
+\end{listing}
+
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{Kerberoast/Kerberoast3.png}
+\end{center}
+\caption{Lista de los SPN disponibles en el dominio.}
+\label{Kerberoast3}
+\end{figure}
+
+\item Posteriormente, solicitamos un ticket TGS para la SPN {\it kerberoast\textbackslash{}testing} (Figura \ref{Kerberoast4}) a través de los siguientes comandos:
+
+\begin{listing}[style=consola, numbers=none]
+# Add-Type -AssemblyName System.IdentityModel
+# New-Object System.IdentityModel.Tokens.KerberosRequestorSecurityToken -ArgumentList "kerberoast/testing"
+\end{listing}
+
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{Kerberoast/Kerberoast4.png}
+\end{center}
+\caption{Solicitud de TGS.}
+\label{Kerberoast4}
+\end{figure}
+
+\item Una vez creado el TGS, los exportamos con la herramienta Mimikatz (Figura \ref{Kerberoast5}) a través del siguiente comando:
+\begin{listing}[style=consola, numbers=none]
+# kerberos::list /export
+\end{listing}
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{Kerberoast/Kerberoast5.png}
+\end{center}
+\caption{Expotar los tickets TGS.}
+\label{Kerberoast5}
+\end{figure}
+
+\item Exfiltramos el ticket TGS creado anteriormente, se crackea con la herramienta {\it tgsrepcrack.py} en una máquina ajena al dominio y se obtiene la contraseña en texto plano (Figura \ref{Kerberoast6}). 
+\begin{figure}[H] %[ht!] para here [b] para bottom [t] para top
+\begin{center}
+\includegraphics[width=15cm]{Kerberoast/Kerberoast6.png}
+\end{center}
+\caption{Cracking del ticket TGS.}
+\label{Kerberoast6}
+\end{figure}
+
+\end{enumerate}
