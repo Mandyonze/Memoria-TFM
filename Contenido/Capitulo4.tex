@@ -1,16 +1,29 @@
-Directotio Activo del inglés {\it Active Directory (AD)}, corresponde a la 
+Directotio Activo del inglés {\it Active Directory (AD)}, corresponde a la implementación de un servicio de directorio proporcionado por Microsoft. La finalidad principal de este servicio es la gestión y administración centralizada de los recursos y los usuarios pertenecientes a una red de una empresa u organización. La in\-for\-ma\-ción admisitrada por Active Directory se puede agrupar en tres grupos princiaples: recursos (impresoras), servicios (aplicaciones web, aplicaciones de correo electróncio, bases de datos, etc.) y usuarios (cuentas, credenciales, grupos, etc.). Con esta in\-for\-ma\-ción, es posible crear y adminsitrar dominios, usuarios y todos los objetos englobados dentro de la misma red. En este capítulo se va a introducir los términos generales y conceptos clave y la creación de un laboratorio local que permita la ejecución de los principales ataques sobre Active Directory.
 
-Active Directory, como ya se ha comentado en la introducción a este trabajo, es el entorno más utilizado por empresas y organizaciones a nivel mundial para la gestión y administración centralizada de redes y recursos. Para ello, Microsoft, desde Microsoft Windows Server 2000, propone un servicio de directorio utilizado para gestionar la in\-for\-ma\-ción sobre todos los recursos en red que dispone una empresa y permite a los usuarios y grupos de usuarios aceeder de forma jerárquica a dichos recursos. La in\-for\-ma\-ción admisitrada por Active Directory se puede agrupar en tres grupos princiaples: recursos (impresoras), servicios (aplicaciones web, aplicaciones de correo electróncio, bases de datos, etc.) y usuarios (cuentas, credenciales, grupos, etc.). Con esta in\-for\-ma\-ción, es posible crear y adminsitrar dominios, usuarios y todos los objetos englobados dentro de la misma red. En este capítulo se va a introducir los términos generales y conceptos clave y la creación de un laboratorio local que permita la ejecución de los principales ataques sobre Active Directory.
+\section{Protocolos y servicios implicados en Active Directory}
+
+\subsubsection{Domain Name System (DNS)}
+
+{\it Domain Name System (DNS)} es el sevicio que proporciona la resolución de nombres de dominio, es decir, resuleve la dirección IP de cada nombre de dominio utilizado en un entorno Active Directory. Este servicio es de gran importancia ya que Active Directory se basa en la resolución de nombres para establecer qué recursos están disponibles a lo largo de una red y dónde se encuentran. 
 
 
+\subsubsection{Lightweight Directory Access Protocol (LDAP)}
+
+{Lightweight Directory Access Protocol (LDAP)} es un procolo que sirve para acceder a los servicios de directorio. Es utilizado por Active Directory como mecanismo de comunicación entre apliciones y equipos con los servicios que dispone el directorio. Además realiza un seguimiento de los objetos existentes en una red. 
 
 
+\subsubsection{Server Message Block (SMB)}
+
+{\it Server Message Block (SMB)} es utilizado para el intercambio de archivos a través de un dominio en servicio de Active Directory. Los controladores de dominio utilizan este protocolo para intercambiar Group Policy Objects. 
 
 
 \section{Términos y conceptos clave}
 
 
 \subsubsection{Active Directory Domain Services (ADDS)}
+
+{\it Active Directory Domain Services (ADDS)} es el servicio de Active Directory cuando este es intalado en un servidor como por ejemplo Windows Server 2016 ó Windows Server 2019.
+
 \subsubsection{Dominio (Domain)}
 
 Un dominio, del inglés {\it Domain}~\cite{Capitulo4:Domain} es definido como un ``contenedor lógico'', es decir, es una estructura lógica que contiene los siguientes componentes:
@@ -29,7 +42,6 @@ Estos componentes y objetos están almacenados en la base de datos de Active Dir
 En relación con el término anterior, un árbol del inglés {Domain Tree}, son colecciones de dominios que se agrupan como una estructura jerárquica. Un arbol se le puede considerar como una serie de dominios conectados jerárquicamente a través de usar el mismo espacio de nombres DNS. Un ejemplo sería, si al dominio anterior: empresa.com le añadimos un ``hijo'' denominado recursoshumanos.empresa.com se crea un árbol de dominios compuesto por un dominio padre o root (empresa.com) y un hijo o child (recursoshumanos.empresa.com). Estos dominios forman parte del mismo árbol y se crean automáticamente relaciones de confianza entre ellos. En un Active Directory pueden coexisstir multitud de árboles de dominio diferentes. 
 
 \subsubsection{Bosque (Forest)}
-
 Un bosque, del inglés {\it Forest}, a grandes rasgos es una colección de árboles de dominio que comparten el mismo {\it schema}, misma estructura lógica, {\it global catalog} y configuración. Alguno de estos términos será introducido a continuación. Todos los dominios pertenecientes a un mismo forest, establecen una relación de confianza transitiva. Cabe destacar, que cuando se crea una instacia de Active Directory por primera vez y se crea un dominio también se está creando implícitamente un forest. 
 
 \subsubsection{Schema}
@@ -65,6 +77,4 @@ Unidades organizativas, del inglés {\it Organizational Unit (OU)} son contenedo
 \subsubsection{Service Principal Name (SPN)}
 
 Un {\it Service Principal Name (SPN)}~\cite{Capitulo4:SPN} es un identificador único asociado a una instacia de un servicio. Los SPN son utilizados por el protocolo de autenticación Kerberos para asociar una instacia de un servicio en concreto con una cuenta de inicio de sesión.  
-
-\subsubsection{Global Catalog}
 
